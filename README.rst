@@ -25,6 +25,7 @@ Finally, to download this package, please open a shell, go to a directory of
 your choice and call:
 
   $ git clone https://github.com/bioidiap/bob.example.faceverify.git
+  
   $ cd bob.example.faceverify
   
 
@@ -32,6 +33,7 @@ To generate the Documentation, please further go into the "doc" directory and
 call:
 
   $ make html
+  
   $ firefox _build/html/index.html
 
 (or use any other browser of your choice). After you did this, please read the
