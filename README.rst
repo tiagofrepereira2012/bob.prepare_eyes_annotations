@@ -9,22 +9,20 @@ systems. It includes examples with three different complexities:
 * An example building an UBM/GMM model on top of DCT blocks.
 
 To use this example, you will require Bob and the AT&T database. If you do not
-have a Bob version yet, you can get it from::
+have a Bob version yet, you can get it from:
 
   http://idiap.github.com/bob/
   
 The AT&T image database is quite small, but sufficient to show how the face
 verification methods work. Still, the results may not be meaningful. One good
 thing about the AT&T database is that it is freely available. You can download
-it from::
+it from:
 
   http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html
 
 
 Finally, to download this package, please open a shell, go to a directory of
 your choice and call:
-
-.. code-block:: sh
 
   $ git clone https://github.com/bioidiap/bob.example.faceverify.git
   $ cd bob.example.faceverify
@@ -33,10 +31,8 @@ your choice and call:
 To generate the Documentation, please further go into the "doc" directory and 
 call:
 
-.. code-block:: sh
-
-  make html
-  firefox _build/html/index.html
+  $ make html
+  $ firefox _build/html/index.html
 
 (or use any other browser of your choice). After you did this, please read the
 documentation and try to execute the examples.
