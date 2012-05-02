@@ -85,6 +85,15 @@ def main():
   print "Training PCA machine"
   pca_machine = train(training_images)
   
+  # extract the first eigenvector
+  projection_matrix = pca_machine.weights
+  eigen_image = projection_matrix[:,0]
+  # reshape the eigenvector to the right image resolution
+  eigen_image.shape = (112,92)
+  # show the first eigenface
+  pyplot.imshow(eigen_image, cmap = 'gray')
+  pyplot.show()
+  
   #####################################################################
   ### extract eigenface features of model and probe images
 
