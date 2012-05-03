@@ -131,5 +131,8 @@ def main():
 
   # save plot to file     
   pyplot.savefig("gabor_phase.png")
-  # show ROC curve
-  pyplot.show()
+
+  # show ROC curve.
+  # enable it if you like. This will open a window and display the ROC curve
+#  pyplot.show()  
+
