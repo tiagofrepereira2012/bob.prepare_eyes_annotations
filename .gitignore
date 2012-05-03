@@ -1,0 +1,9 @@
+*.pyc
+.installed.cfg
+.mr.developer.cfg
+eggs/
+develop-eggs/
+bob.example.faceverify.egg-info/
+src/
+bin/
+Database
