@@ -36,7 +36,7 @@ def extract_feature(image):
   """Extracts the DCT features for the given image"""
 
   # compute shape of the image blocks
-  block_shape = bob.ip.get_block_3d_output_shape(image, DCT_BLOCK_SIZE, DCT_BLOCK_SIZE, DCT_BLOCK_OVERLAP, DCT_BLOCK_OVERLAP)
+  block_shape = bob.ip.get_block_shape(image, DCT_BLOCK_SIZE, DCT_BLOCK_SIZE, DCT_BLOCK_OVERLAP, DCT_BLOCK_OVERLAP)
   image_blocks = numpy.ndarray(block_shape, 'float64')
   
   # fill image blocks
