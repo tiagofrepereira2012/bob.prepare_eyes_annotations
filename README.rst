@@ -14,7 +14,7 @@ have a Bob version yet, you can get it from:
   http://idiap.github.com/bob/
   
 If you already have installed Bob, please make sure that you have at least 
-the version 1.0.3, otherwise the example won't work.
+the version 1.0.4, otherwise the example won't work.
   
 The AT&T image database is quite small, but sufficient to show how the face
 verification methods work. Still, the results may not be meaningful. One good
