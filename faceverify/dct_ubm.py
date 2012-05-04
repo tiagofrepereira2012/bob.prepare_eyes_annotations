@@ -91,28 +91,28 @@ def train(training_features):
 def enrol(model_features, ubm, gmm_trainer):
   """Enrolls the GMM model for the given model features (which should stem from the same identity)"""
   # create array set used for training
-  training_set = bob.io.Arrayset()
+  enrol_set = bob.io.Arrayset()
   for feature in model_features.values():
-    training_set.extend(feature)
+    enrol_set.extend(feature)
   # create a GMM from the UBM
   gmm = bob.machine.GMMMachine(ubm)
 
   # train the GMM
-  gmm_trainer.train(gmm, training_set)
+  gmm_trainer.train(gmm, enrol_set)
 
   # return the resulting gmm    
   return gmm
 
 
-def stats(feature, ubm):
+def stats(probe_feature, ubm):
   """Computes the UBM Statistics for the given feature vector"""
   # compute the UBM stats for the given feature
-  feature = bob.io.Arrayset(feature)
+  feature = bob.io.Arrayset(probe_feature)
   
   # Accumulate statistics
   gmm_stats = bob.machine.GMMStats(ubm.dim_c, ubm.dim_d)
   gmm_stats.init()
-  ubm.acc_statistics(feature, gmm_stats)
+  ubm.acc_statistics(probe_feature, gmm_stats)
   
   return gmm_stats
   
