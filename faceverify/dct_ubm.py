@@ -106,8 +106,8 @@ def enrol(model_features, ubm, gmm_trainer):
 
 def stats(probe_feature, ubm):
   """Computes the UBM Statistics for the given feature vector"""
-  # compute the UBM stats for the given feature
-  feature = bob.io.Arrayset(probe_feature)
+  # compute the UBM stats for the given probe feature
+  probe_feature = bob.io.Arrayset(probe_feature)
   
   # Accumulate statistics
   gmm_stats = bob.machine.GMMStats(ubm.dim_c, ubm.dim_d)
