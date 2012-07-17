@@ -69,3 +69,13 @@ Unpack the database in a directory that fits you. The easiest solution is to
 create a subdirectory ``Database`` in this package. If you decide to put the
 data somewhere else, please remember the image directory.
 
+.. note ::
+
+  If you are at Idiap, the AT&T database is located at 
+  /idiap/group/biometric/databases/orl. To ease up the usage of the examples, 
+  you can generate a link to the database:
+  
+  .. code-block:: sh
+  
+    $ ln -s /idiap/group/biometric/databases/orl Database
+
