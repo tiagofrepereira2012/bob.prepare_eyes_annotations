@@ -37,7 +37,7 @@ call:
 
   $ make html
   
-  $ firefox _build/html/index.html
+  $ firefox html/index.html
 
 (or use any other browser of your choice). After you did this, please read the
 documentation and try to execute the examples.
