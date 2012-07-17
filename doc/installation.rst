@@ -7,8 +7,10 @@
   To follow these instructions locally you will need a local copy of this
   package. Start by cloning this project with something like::
 
-    $ git clone https://github.com/bioidiap/bob.example.faceverify.git
-    $ cd bob.example.faceverify
+.. code-block:: sh
+
+  $ git clone https://github.com/bioidiap/bob.example.faceverify.git
+  $ cd bob.example.faceverify
 
 
 Installation of the toolkit uses the `buildout <http://www.buildout.org/>`_

@@ -20,7 +20,7 @@ help:
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 
 clean:
-	-rm -rf $(BUILDDIR)/{html,doctest} 
+	-rm -rf $(BUILDDIR)/html $(BUILDDIR)/doctest $(BUILDDIR)/doctrees
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
