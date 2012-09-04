@@ -45,9 +45,12 @@ setup(
     # on the current system will be installed locally and only visible to the
     # scripts of this package. Don't worry - You won't need administrative
     # privileges when using buildout.
+
+    # TODO: Add a version number requirement to bob, when ready
     install_requires=[
         "sphinx",                     # to generate the documentation
-        "bob >= 1.0.0, < 1.1.0",      # base signal proc./machine learning library
+        "bob",                        # base signal proc./machine learning library
+        "xbob.db.atnt",               # the AT&T (ORL) database of images
     ],
 
     # This entry defines which scripts you will have inside the 'bin' directory
