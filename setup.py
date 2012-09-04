@@ -15,7 +15,7 @@
 # The 'buildout' system we use here will go further and wrap this package in
 # such a way to create an isolated python working environment. Buildout will
 # make sure that dependencies which are not yet installed do get installed, but
-# **without** requiring adminstrative privileges on the host system. This
+# **without** requiring administrative privileges on the host system. This
 # allows you to test your package with new python dependencies w/o requiring
 # administrative interventions.
 
@@ -28,15 +28,16 @@ setup(
     # This is the basic information about your project. Modify all this
     # information before releasing code publicly.
     name='bob.example.faceverify',
-    version='0.1',
+    version='0.1.1',
     description='Example for using Bob to create face verification systems',
-    url='http://github.com/idiap/bob.example.faceverify',
-    license='LICENSE.txt',
-    author_email='Manuel Guenther <Manuel.Guenther@idiap.ch>',
+    url='http://pypi.python.org/pypi/bob.example.faceverify',
+    license='GPLv3',
+    author='Manuel Guenther',
+    author_email='manuel.guenther@idiap.ch',
 
     # If you have a better, long description of your package, place it on the
     # 'doc' directory and then hook it here
-    #long_description=open('doc/long-description.rst').read(),
+    long_description=open('README.rst').read(),
 
     # This line is required for any distutils based packaging.
     packages=find_packages(),
@@ -44,13 +45,10 @@ setup(
     # This line defines which packages should be installed when you "install"
     # this package. All packages that are mentioned here, but are not installed
     # on the current system will be installed locally and only visible to the
-    # scripts of this package. Don't worry - You won't need adminstrative
+    # scripts of this package. Don't worry - You won't need administrative
     # privileges when using buildout.
     install_requires=[
         "bob",      # base signal proc./machine learning library
-
-        # here are some more examples you could include:
-        #"argparse", # better option parsing
     ],
 
     # This entry defines which scripts you will have inside the 'bin' directory
