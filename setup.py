@@ -28,15 +28,13 @@ setup(
     # This is the basic information about your project. Modify all this
     # information before releasing code publicly.
     name='bob.example.faceverify',
-    version='0.1.1',
+    version='0.1.2',
     description='Example for using Bob to create face verification systems',
     url='http://pypi.python.org/pypi/bob.example.faceverify',
     license='GPLv3',
     author='Manuel Guenther',
     author_email='manuel.guenther@idiap.ch',
 
-    # If you have a better, long description of your package, place it on the
-    # 'doc' directory and then hook it here
     long_description=open('README.rst').read(),
 
     # This line is required for any distutils based packaging.
@@ -48,23 +46,14 @@ setup(
     # scripts of this package. Don't worry - You won't need administrative
     # privileges when using buildout.
     install_requires=[
-        "bob",      # base signal proc./machine learning library
+        "sphinx",                     # to generate the documentation
+        "bob >= 1.0.0, < 1.1.0",      # base signal proc./machine learning library
     ],
 
     # This entry defines which scripts you will have inside the 'bin' directory
     # once you install the package (or run 'bin/buildout'). The order of each
     # entry under 'console_scripts' is like this:
     #   script-name-at-bin-directory = module.at.your.library:function
-    #
-    # The module.at.your.library is the python file within your library, using
-    # the python syntax for directories (i.e., a '.' instead of '/' or '\').
-    # This syntax also omits the '.py' extension of the filename. So, a file
-    # installed under 'example/foo.py' that contains a function which
-    # implements the 'main()' function of particular script you want to have
-    # should be referred as 'example.foo:main'.
-    #
-    # In this simple example we will create a single program that will print
-    # the version of bob.
     entry_points={
       'console_scripts': [
         'eigenface.py = faceverify.eigenface:main',
