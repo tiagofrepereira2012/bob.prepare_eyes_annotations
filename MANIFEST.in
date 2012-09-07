@@ -1,5 +1,5 @@
 include README.rst
 include bootstrap.py
-inlcude buildout.cfg
+include buildout.cfg
 recursive-include doc *.rst
 
