@@ -97,7 +97,7 @@ def main():
 
   print "Computing scores"
   # define a certain Gabor jet similarity function that should be used
-  similarity_function = bob.machine.DisparityCorrectedPhaseDifference()
+  similarity_function = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.PHASE_DIFF)
 
   # iterate through models and probes and compute scores
   for model_key, model_feature in model_features.iteritems():

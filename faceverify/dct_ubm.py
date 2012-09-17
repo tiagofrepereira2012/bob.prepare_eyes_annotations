@@ -16,7 +16,7 @@ ATNT_IMAGE_EXTENSION = ".pgm"
 def load_images(db, group = None, purpose = None, client_id = None):
   """Reads the images for the given group and the given client id from the given database"""
   # get the file names from the database
-  file_names = db.files(groups = group, purposes = purpose, client_ids = client_id, directory = ATNT_IMAGE_DIRECTORY, extension = ATNT_IMAGE_EXTENSION)
+  file_names = db.files(groups = group, purposes = purpose, model_ids = client_id, directory = ATNT_IMAGE_DIRECTORY, extension = ATNT_IMAGE_EXTENSION)
   # iterate through the list of file names
   images = {}
   for key, image_name in file_names.iteritems():
@@ -37,7 +37,7 @@ def extract_feature(image):
   """Extracts the DCT features for the given image"""
 
   # compute shape of the image blocks
-  block_shape = bob.ip.get_block_shape(image, DCT_BLOCK_SIZE, DCT_BLOCK_SIZE, DCT_BLOCK_OVERLAP, DCT_BLOCK_OVERLAP)
+  block_shape = bob.ip.get_block_3d_output_shape(image, DCT_BLOCK_SIZE, DCT_BLOCK_SIZE, DCT_BLOCK_OVERLAP, DCT_BLOCK_OVERLAP)
   image_blocks = numpy.ndarray(block_shape, 'float64')
 
   # fill image blocks
@@ -155,7 +155,7 @@ def main():
   gmm_trainer.set_prior_gmm(ubm)
 
   # create a GMM model for each model identity
-  model_ids = atnt_db.client_ids(groups = 'dev')
+  model_ids = atnt_db.clients(groups = 'dev')
   models = {}
   for model_id in model_ids:
     # load images for the current model id
