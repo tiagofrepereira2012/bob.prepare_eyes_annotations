@@ -52,13 +52,12 @@ For training the projection matrix, the training images need to be read:
   >>> for filename in training_image_files.values():
   ...   training_image = bob.io.load(filename)
 
-Since the images are already aligned to the eye positions, they can simply be linearized (converted into one long vector) and put into an ``bob.io.ArraySet``:
+Since the images are already aligned to the eye positions, they can simply be linearized (converted into one long vector) and put into a 2D array
+with one sample in each row:
 
 .. code-block:: python
 
-  >>> training_set = bob.io.Arrayset()
-  >>> for image in training_images.values():
-  ...  training_set.append(image.flatten())
+  >>> training_set = numpy.vstack([image.flatten() for image in training_images.values()])
 
 which is used to train a ``bob.machine.LinearMachine``:
 
@@ -177,20 +176,21 @@ while the expected verification result is: FAR 22% and FRR 22% at distance thres
 The UBM/GMM modeling of DCT Blocks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The last example shows a quite complicated, but very successful algorithm.
-The first step is the feature extraction of the training image features and the collection of them in a **bob.io.Arrayset**.
+The first step is the feature extraction of the training image features and the collection of them in a 2D array.
 In this experiment we will use *Discrete Cosine Transform* (DCT) block features [MM09]_:
 
 .. code-block:: python
 
   >>> training_image_files = atnt_db.files(groups = 'train', ...)
-  >>> training_set = bob.io.Arrayset()
+  >>> training_set_list = []
   >>> for filename in training_image_files.values():
   ...   training_image = bob.io.load(filename)
   ...   # ... prepare image blocks ...
   ...   bob.ip.block(training_image, training_image_blocks, ...)
   ...   # ... create DCT extractor ...
   ...   training_dct_blocks = dct_extractor(training_image_blocks)
-  ...   training_set.extend(training_dct_blocks)
+  ...   training_set_list.append(training_dct_blocks)
+  >>> training_set = numpy.vstack(training_set_list)
 
 With these training features, a *universal background model* (UBM) is computed [RQD00]_.
 It is a *Gaussian Mixture Model* (GMM) that holds information about the overall distribution of DCT features in facial images.
@@ -237,11 +237,12 @@ For that purpose, a **bob.trainer.MAP_GMMTrainer** is used:
   >>> # ... initialize GMM trainer ...
   >>> for model_id in model_ids:
   ...   model_filenames = db.files(groups = 'test', purposes = 'enrol', client_ids = model_id, ...)
-  ...   model_feature_set = bob.io.Arrayset()
+  ...   model_feature_set_list = []
   ...   for filename in model_filenames.values():
   ...     # ... load image and extract model image blocks ...
   ...     model_dct_blocks = dct_extractor(model_image_blocks)
-  ...     model_feature_set.extend(model_dct_blocks)
+  ...     model_feature_set_list.append(model_dct_blocks)
+  ...   model_feature_set = numpy.vstack(model_feature_set_list)
   ...   model_gmm = bob.machine.GMMMachine(ubm)
   ...   gmm_trainer.train(model_gmm, model_feature_set)
 

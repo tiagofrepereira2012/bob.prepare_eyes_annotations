@@ -34,11 +34,8 @@ def train(training_images):
   pca_trainer = bob.trainer.SVDPCATrainer()
 
   # create array set used for training
-  training_set = bob.io.Arrayset()
-
   # iterate through the training examples and linearize the images
-  for image in training_images.values():
-    training_set.append(image.flatten())
+  training_set = numpy.vstack([image.flatten() for image in training_images.values()])
 
   # training the SVD PCA returns a machine that can be used for projection
   pca_machine, eigen_values = pca_trainer.train(training_set)

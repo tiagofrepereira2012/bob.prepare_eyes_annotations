@@ -57,13 +57,9 @@ def train(training_features):
   """Trains the UBM/GMM module with the given set of training DCT features"""
 
   # create array set used for training
-  training_set = bob.io.Arrayset()
-  # iterate through the training examples
-  for feature in training_features.values():
-    # stack the examples to generate training matrix
-    training_set.extend(feature)
+  training_set = numpy.vstack([v for v in training_features.values()])
 
-  input_size = training_set.shape[0]
+  input_size = training_set.shape[1]
   # create the KMeans and UBM machine
   kmeans = bob.machine.KMeansMachine(NUMBER_OF_GAUSSIANS, input_size)
   ubm = bob.machine.GMMMachine(NUMBER_OF_GAUSSIANS, input_size)
@@ -91,10 +87,8 @@ def train(training_features):
 
 def enrol(model_features, ubm, gmm_trainer):
   """Enrolls the GMM model for the given model features (which should stem from the same identity)"""
-  # create array set used for training
-  enrol_set = bob.io.Arrayset()
-  for feature in model_features.values():
-    enrol_set.extend(feature)
+  # create array set used for enroling
+  enrol_set = numpy.vstack(model_features.values())
   # create a GMM from the UBM
   gmm = bob.machine.GMMMachine(ubm)
 
@@ -108,7 +102,7 @@ def enrol(model_features, ubm, gmm_trainer):
 def stats(probe_feature, ubm):
   """Computes the UBM Statistics for the given feature vector"""
   # compute the UBM stats for the given probe feature
-  probe_feature = bob.io.Arrayset(probe_feature)
+  probe_feature = numpy.vstack([probe_feature])
 
   # Accumulate statistics
   gmm_stats = bob.machine.GMMStats(ubm.dim_c, ubm.dim_d)
