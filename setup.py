@@ -28,7 +28,7 @@ setup(
     # This is the basic information about your project. Modify all this
     # information before releasing code publicly.
     name='bob.example.faceverify',
-    version='0.2.2',
+    version='0.2.3',
     description='Example for using Bob to create face verification systems',
     url='http://pypi.python.org/pypi/bob.example.faceverify',
     license='GPLv3',
@@ -41,10 +41,6 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
-
-    namespace_packages=[
-      "faceverify",
-      ],
 
     # This line defines which packages should be installed when you "install"
     # this package. All packages that are mentioned here, but are not installed
