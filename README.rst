@@ -16,8 +16,6 @@ It includes examples with three different complexities:
 To use this example, you will require Bob and the AT&T database.
 If you do not have a Bob version yet, you can get it from http://www.idiap.ch/software/bob.
 
-If you already have installed Bob, please make sure that you have the version 1.0.5, otherwise the example won't work.
-
 The AT&T image database is quite small, but sufficient to show how the face verification methods work.
 Still, the results may not be meaningful.
 One good thing about the AT&T database is that it is freely available.

@@ -28,7 +28,7 @@ setup(
     # This is the basic information about your project. Modify all this
     # information before releasing code publicly.
     name='bob.example.faceverify',
-    version='0.1.3',
+    version='0.1.4',
     description='Example for using Bob to create face verification systems',
     url='http://pypi.python.org/pypi/bob.example.faceverify',
     license='GPLv3',
@@ -49,7 +49,7 @@ setup(
     # TODO: Add a version number requirement to bob, when ready
     install_requires=[
         "sphinx",                     # to generate the documentation
-        "bob >= 1.1.0a0",               # base signal proc./machine learning library
+        "bob >= 1.1.0",               # base signal proc./machine learning library
         "xbob.db.atnt",               # the AT&T (ORL) database of images
     ],
 

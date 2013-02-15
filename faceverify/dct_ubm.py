@@ -16,12 +16,12 @@ ATNT_IMAGE_EXTENSION = ".pgm"
 def load_images(db, group = None, purpose = None, client_id = None):
   """Reads the images for the given group and the given client id from the given database"""
   # get the file names from the database
-  file_names = db.files(groups = group, purposes = purpose, model_ids = client_id, directory = ATNT_IMAGE_DIRECTORY, extension = ATNT_IMAGE_EXTENSION)
+  files = db.objects(groups = group, purposes = purpose)
   # iterate through the list of file names
   images = {}
-  for key, image_name in file_names.iteritems():
+  for k in files:
     # load image and linearize it into a vector
-    images[key] = bob.io.load(image_name).astype(numpy.float64)
+    images[k.id] = bob.io.load(k.make_path(ATNT_IMAGE_DIRECTORY, ATNT_IMAGE_EXTENSION)).astype(numpy.float64)
   return images
 
 
