@@ -39,6 +39,8 @@ setup(
 
     # This line is required for any distutils based packaging.
     packages=find_packages(),
+    include_package_data=True,
+    zip_safe=True,
 
     # This line defines which packages should be installed when you "install"
     # this package. All packages that are mentioned here, but are not installed
@@ -46,9 +48,8 @@ setup(
     # scripts of this package. Don't worry - You won't need administrative
     # privileges when using buildout.
 
-    # TODO: Add a version number requirement to bob, when ready
     install_requires=[
-        "sphinx",                     # to generate the documentation
+        "setuptools",                 
         "bob >= 1.1.0",               # base signal proc./machine learning library
         "xbob.db.atnt",               # the AT&T (ORL) database of images
     ],
