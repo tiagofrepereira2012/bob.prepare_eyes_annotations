@@ -215,6 +215,7 @@ def main():
 
   # save plot to file
   pyplot.savefig("dct_ubm.png")
+  print "Saved figure 'dct_ubm.png'"
 
   # show ROC curve.
   # enable it if you like. This will open a window and display the ROC curve

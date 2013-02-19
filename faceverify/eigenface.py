@@ -141,6 +141,7 @@ def main():
 
   # save plot to file
   pyplot.savefig("eigenface.png")
+  print "Saved figure 'eigenface.png'"
 
   # show ROC curve.
   # enable it if you like. This will open a window and display the ROC curve
