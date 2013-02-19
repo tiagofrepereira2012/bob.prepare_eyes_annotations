@@ -6,21 +6,21 @@ To run the examples, just call the scripts from within the ``bin`` directory, e.
 
 .. code-block:: sh
 
-  $ bin/eigenface.py
+  $ ./bin/eigenface.py
 
-If you installed the image database in another folder than ``Database``, please give this directrory as parameter to the script, e.g.:
+If you installed the image database in another folder than ``Database``, please give this directory as parameter to the script, e.g.:
 
 .. code-block:: sh
 
-  $ bin/eigenface.py <AT&T_DATABASE_DIR>
+  $ ./bin/eigenface.py <AT&T_DATABASE_DIR>
 
 There are three example scripts:
 
 .. code-block:: sh
 
-  $ bin/eigenface.py
-  $ bin/gabor_phase.py
-  $ bin/dct_ubm.py
+  $ ./bin/eigenface.py
+  $ ./bin/gabor_phase.py
+  $ ./bin/dct_ubm.py
 
 that perform more or less complicated face verification experiments.
 Each experiment creates an ROC curve that contains the final verification result of the test.

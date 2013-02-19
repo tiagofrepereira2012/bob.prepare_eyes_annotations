@@ -5,15 +5,24 @@
 .. note::
 
   To follow these instructions locally you will need a local copy of this package.
-  Start by cloning this project with something like:
+  You can obtain a copy by:
 
   .. code-block:: sh
 
-    $ pip install bob.example.faceverify
+    $ wget https://pypi.python.org/packages/source/b/bob.example.faceverify/bob.example.faceverify-<version>.zip
+    $ unzip bob.example.faceverify-<version>.zip
+    $ cd bob.example.faceverify-<version>
 
-Installation of the toolkit uses the `buildout <http://www.buildout.org/>`_ build environment.
+  where ``<version>`` is the latest version of the package that you can find under https://pypi.python.org/pypi/bob.example.faceverify, or by cloning our git repository
+
+  .. code-block:: sh
+
+    $ git clone https://github.com/bioidiap/bob.example.faceverify.git
+    $ cd bob.example.faceverify
+
+Installation of this example uses the `buildout <http://www.buildout.org/>`_ build environment.
 You don't need to understand its inner workings to use this package.
-Here is a recipe to get you started (shell commands are marked with a ``$`` signal):
+Here is a recipe to get you started:
 
 .. code-block:: sh
 
@@ -30,23 +39,6 @@ These 2 commands should download and install all non-installed dependencies and 
   If Bob is installed by the administrator of your system, it is safe to consider it uses the default python interpreter.
   In this case, the above 2 command lines should work as expected.
 
-
-Use this example with Bob not installed globally
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-If your Bob version is not installed globally, you have to edit the *buildout.cfg* file.
-Please search for the ``egg-directories`` region and set the value according to your local Bob install directory.
-If you are at Idiap, you can simply choose the pre-set directories.
-
-
-Use Bob at Idiap
-~~~~~~~~~~~~~~~~
-To get the example running nicely at Idiap, as noted above, ``bootstrap.py`` has to be executed with the correct python version.
-For Idiap, this is (currently):
-
-.. code-block:: sh
-
-  $ /idiap/group/torch5spro/nightlies/externals/v3/ubuntu-10.04-x86_64/bin/python bootstrap.py
-  $ ./bin/buildout
 
 
 Downloading the test database
