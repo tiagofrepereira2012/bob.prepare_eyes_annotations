@@ -7,7 +7,7 @@ from matplotlib import pyplot
 # This is the base directory where by default the AT&T images are found. You can
 # overwrite this  directory on the command line
 global ATNT_IMAGE_DIRECTORY
-ATNT_IMAGE_DIRECTORY = "Database"
+ATNT_IMAGE_DIRECTORY = os.environ['ATNT_DATABASE_DIRECTORY'] if 'ATNT_DATABASE_DIRECTORY' in os.environ else "Database"
 
 # The default file name extension of the AT&T images
 ATNT_IMAGE_EXTENSION = ".pgm"

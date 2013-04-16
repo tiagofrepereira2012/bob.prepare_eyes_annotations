@@ -7,7 +7,7 @@ from matplotlib import pyplot
 # This is the base directory where by default the AT&T images are found. You can
 # overwrite this  directory on the command line
 global ATNT_IMAGE_DIRECTORY
-ATNT_IMAGE_DIRECTORY = "Database"
+ATNT_IMAGE_DIRECTORY = os.environ['ATNT_DATABASE_DIRECTORY'] if 'ATNT_DATABASE_DIRECTORY' in os.environ else "Database"
 
 # The default file name extension of the AT&T images
 ATNT_IMAGE_EXTENSION = ".pgm"
@@ -85,15 +85,15 @@ def train(training_features):
   return ubm
 
 
-def enrol(model_features, ubm, gmm_trainer):
+def enroll(model_features, ubm, gmm_trainer):
   """Enrolls the GMM model for the given model features (which should stem from the same identity)"""
-  # create array set used for enroling
-  enrol_set = numpy.vstack(model_features.values())
+  # create array set used for enrolling
+  enroll_set = numpy.vstack(model_features.values())
   # create a GMM from the UBM
   gmm = bob.machine.GMMMachine(ubm)
 
   # train the GMM
-  gmm_trainer.train(gmm, enrol_set)
+  gmm_trainer.train(gmm, enroll_set)
 
   # return the resulting gmm
   return gmm
@@ -159,7 +159,7 @@ def main():
     for key, image in model_images.iteritems():
       models_for_current_id[key] = extract_feature(image)
     # enroll model for the current identity from these features
-    model = enrol(models_for_current_id, ubm, gmm_trainer)
+    model = enroll(models_for_current_id, ubm, gmm_trainer)
     models[model_id] = model
 
   #####################################################################

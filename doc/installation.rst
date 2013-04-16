@@ -58,3 +58,15 @@ If you decide to put the data somewhere else, please remember the image director
 
     $ ln -s /idiap/group/biometric/databases/orl Database
 
+
+Verify your installation
+~~~~~~~~~~~~~~~~~~~~~~~~
+To verify your installation, you might want to run the unit tests that are provided with this package.
+For this, the AT&T database is required to be either in the ``Database`` subdirectory of this package (see above), or that the ``ATNT_DATABASE_DIRECTORY`` environment variable points to your database directory.
+At Idiap, you might want to use:
+
+.. code-block:: sh
+
+  $ export ATNT_DATABASE_DIRECTORY=/idiap/group/biometric/databases/orl
+  $ bin/nosetests -v
+

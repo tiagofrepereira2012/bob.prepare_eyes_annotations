@@ -59,7 +59,7 @@ Afterwards, please call::
   $ python bootstrap.py
   $ ./bin/buildout
 
-to generate the scripts that, amongst others, will run the face verification algorithms. For more details, please refer to the documentation, which you might create and open yourself by::
+to generate the scripts that, amongst others, will run the face verification algorithms. Please verify your installation by running the test cases. For more details, please refer to the documentation, which you might create and open yourself by::
 
   $ ./bin/sphinx-build doc sphinx
   $ firefox sphinx/index.html
