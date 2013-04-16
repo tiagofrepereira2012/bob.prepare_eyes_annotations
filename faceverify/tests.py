@@ -36,7 +36,7 @@ regenerate_references = False
 
 
 class FaceVerifyExampleTest(unittest.TestCase):
-  """Performs various tests on the BANCA database."""
+  """Performs various tests for the face verification examples."""
 
   def resource(self, f):
     return pkg_resources.resource_filename('faceverify', '../testdata/%s'%f)
@@ -58,8 +58,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
 
     # load PCA reference and check that it is still similar
     pca_ref = bob.machine.LinearMachine(bob.io.HDF5File(self.resource('pca_projector.hdf5')))
-#TODO: enable for bob version 1.2.0
-#    self.assertTrue(pca_ref.is_similar_to(pca))
+    self.assertTrue(pca_ref.is_similar_to(pca))
 
     # check the the projection is the same
     model = extract_feature(images[1], pca)
@@ -142,8 +141,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
 
     # load PCA reference and check that it is still similar
     ubm_ref = bob.machine.GMMMachine(bob.io.HDF5File(self.resource('dct_ubm.hdf5')))
-#TODO: enable for bob version 1.2.0
-#    self.assertTrue(ubm_ref.is_similar_to(ubm))
+    self.assertTrue(ubm_ref.is_similar_to(ubm))
 
 
     # enroll a model with two features
@@ -155,8 +153,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
       model.save(bob.io.HDF5File(self.resource('dct_model.hdf5'), 'w'))
 
     model_ref = bob.machine.GMMMachine(bob.io.HDF5File(self.resource('dct_model.hdf5')))
-#TODO: enable for bob version 1.2.0
-#    self.assertTrue(model_ref.is_similar_to(model))
+    self.assertTrue(model_ref.is_similar_to(model))
 
     # compute probe statistics
     probe = stats(features[keys[12]], ubm)
@@ -164,8 +161,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
       probe.save(bob.io.HDF5File(self.resource('dct_probe.hdf5'), 'w'))
 
     probe_ref = bob.machine.GMMStats(bob.io.HDF5File(self.resource('dct_probe.hdf5')))
-#TODO: enable for bob version 1.2.0
-#    self.assertTrue(probe_ref.is_similar_to(probe))
+    self.assertTrue(probe_ref.is_similar_to(probe))
 
     # compute score
     score = bob.machine.linear_scoring([model], ubm, [probe])[0,0]
