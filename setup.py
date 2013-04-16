@@ -28,7 +28,7 @@ setup(
     # This is the basic information about your project. Modify all this
     # information before releasing code publicly.
     name='bob.example.faceverify',
-    version='0.3.0',
+    version='0.4.0',
     description='Example for using Bob to create face verification systems',
     url='http://pypi.python.org/pypi/bob.example.faceverify',
     license='GPLv3',
@@ -50,7 +50,7 @@ setup(
 
     install_requires=[
         "setuptools",
-        "bob >= 1.1.0, <= 1.1.3",      # base signal proc./machine learning library
+        "bob >= 1.2.0a0",               # base signal proc./machine learning library
         "xbob.db.atnt",               # the AT&T (ORL) database of images
     ],
 
@@ -64,6 +64,11 @@ setup(
         'gabor_phase.py = faceverify.gabor_phase:main',
         'dct_ubm.py = faceverify.dct_ubm:main'
         ],
-      },
+
+       # bob unittest declaration
+      'bob.test': [
+        'faceverify = faceverify.tests:FaceVerifyExampleTest',
+        ],
+     },
 
 )
