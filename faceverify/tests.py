@@ -22,6 +22,7 @@
 
 import os, sys
 import unittest
+from nose.plugins.skip import SkipTest
 
 import bob
 import numpy
@@ -38,12 +39,25 @@ regenerate_references = False
 class FaceVerifyExampleTest(unittest.TestCase):
   """Performs various tests for the face verification examples."""
 
+  def setUp(self):
+    self.skip_tests = False
+    if not os.path.exists('Database') and not 'ATNT_DATABASE_DIRECTORY' in os.environ:
+      if os.path.exists('/idiap/group/biometric/databases/orl'):
+        # we are at Idiap, so we select the right directory
+        os.environ['ATNT_DATABASE_DIRECTORY'] = '/idiap/group/biometric/databases/orl'
+      else:
+        self.skip_tests = True
+
   def resource(self, f):
     return pkg_resources.resource_filename('faceverify', '../testdata/%s'%f)
+
 
   def test01_eigenface(self):
     # test the eigenface algorithm
     from faceverify.eigenface import load_images, train, extract_feature
+
+    if self.skip_tests:
+      raise SkipTest("The 'ATNT_DATABASE_DIRECTORY' environment variable is not set, and the 'Database' directory is not found.")
 
     # open database
     atnt_db = xbob.db.atnt.Database()
@@ -81,7 +95,10 @@ class FaceVerifyExampleTest(unittest.TestCase):
 
   def test02_gabor_phase(self):
     # test the gabor phase algorithm
-    from faceverify.gabor_phase import load_images, extract_feature
+    from faceverify.gabor_phase import load_images, extract_feature, ATNT_IMAGE_DIRECTORY
+
+    if self.skip_tests:
+      raise SkipTest("The 'ATNT_DATABASE_DIRECTORY' environment variable is not set, and the 'Database' directory is not found.")
 
     # open database
     atnt_db = xbob.db.atnt.Database()
@@ -111,9 +128,13 @@ class FaceVerifyExampleTest(unittest.TestCase):
     score = graph.similarity(model, probe, similarity_function)
     self.assertAlmostEqual(score, 0.110043015)
 
+
   def test03_dct_ubm(self):
     # test the UBM/GMM algorithm
-    from faceverify.dct_ubm import load_images, extract_feature, train, enroll, stats, NUMBER_OF_GAUSSIANS
+    from faceverify.dct_ubm import load_images, extract_feature, train, enroll, stats, NUMBER_OF_GAUSSIANS, ATNT_IMAGE_DIRECTORY
+
+    if self.skip_tests:
+      raise SkipTest("The 'ATNT_DATABASE_DIRECTORY' environment variable is not set, and the 'Database' directory is not found.")
 
     # open database
     atnt_db = xbob.db.atnt.Database()
