@@ -49,7 +49,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
         self.skip_tests = True
 
   def resource(self, f):
-    return pkg_resources.resource_filename('faceverify', '../testdata/%s'%f)
+    return pkg_resources.resource_filename('faceverify.tests', f)
 
 
   def test01_eigenface(self):
@@ -146,7 +146,9 @@ class FaceVerifyExampleTest(unittest.TestCase):
     extract_feature(images[1])
 
     # extract features for several images
-    features = {i : extract_feature(images[i]) for i in keys[:13]}
+#    features = {i : extract_feature(images[i]) for i in keys[:13]}
+    features = {}
+    for i in keys[:13]: features[i] = extract_feature(images[i])
 
     if regenerate_references:
       bob.io.save(features[1], self.resource('dct_feature.hdf5'))
@@ -156,7 +158,10 @@ class FaceVerifyExampleTest(unittest.TestCase):
 
     # train the UBM with several features, and a limited numebr of Gaussians
     NUMBER_OF_GAUSSIANS = 2
-    ubm = train({i : features[i] for i in keys[:10]})
+#    ubm = train({i : features[i] for i in keys[:10]})
+    trainset = {}
+    for i in keys[:10]: trainset[i] = features[i]
+    ubm = train(trainset)
     if regenerate_references:
       ubm.save(bob.io.HDF5File(self.resource('dct_ubm.hdf5'), 'w'))
 
@@ -169,7 +174,10 @@ class FaceVerifyExampleTest(unittest.TestCase):
     enroller = bob.trainer.MAP_GMMTrainer()
     enroller.max_iterations = 1
     enroller.set_prior_gmm(ubm)
-    model = enroll({i : features[i] for i in keys[10:12]}, ubm, enroller)
+#    model = enroll({i : features[i] for i in keys[10:12]}, ubm, enroller)
+    enrollset = {}
+    for i in keys[10:12]: enrollset[i] = features[i]
+    model = enroll(enrollset)
     if regenerate_references:
       model.save(bob.io.HDF5File(self.resource('dct_model.hdf5'), 'w'))
 

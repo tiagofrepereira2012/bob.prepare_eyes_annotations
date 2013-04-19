@@ -38,7 +38,7 @@ setup(
     long_description=open('README.rst').read(),
 
     # This line is required for any distutils based packaging.
-    packages=find_packages() + ['testdata'],
+    packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
 
