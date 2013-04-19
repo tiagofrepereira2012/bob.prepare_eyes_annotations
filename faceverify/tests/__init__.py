@@ -177,7 +177,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
 #    model = enroll({i : features[i] for i in keys[10:12]}, ubm, enroller)
     enrollset = {}
     for i in keys[10:12]: enrollset[i] = features[i]
-    model = enroll(enrollset)
+    model = enroll(enrollset, ubm, enroller)
     if regenerate_references:
       model.save(bob.io.HDF5File(self.resource('dct_model.hdf5'), 'w'))
 
