@@ -54,7 +54,10 @@ class FaceVerifyExampleTest(unittest.TestCase):
 
   def test01_eigenface(self):
     # test the eigenface algorithm
-    from faceverify.eigenface import load_images, train, extract_feature
+    try:
+      from faceverify.eigenface import load_images, train, extract_feature
+    except ImportError as e:
+      raise SkipTest("Skipping the tests since importing from faceverify.eigenface raised exception '%s'"%e)
 
     if self.skip_tests:
       raise SkipTest("The 'ATNT_DATABASE_DIRECTORY' environment variable is not set, and the 'Database' directory is not found.")
@@ -95,7 +98,10 @@ class FaceVerifyExampleTest(unittest.TestCase):
 
   def test02_gabor_phase(self):
     # test the gabor phase algorithm
-    from faceverify.gabor_phase import load_images, extract_feature, ATNT_IMAGE_DIRECTORY
+    try:
+      from faceverify.gabor_phase import load_images, extract_feature, ATNT_IMAGE_DIRECTORY
+    except ImportError as e:
+      raise SkipTest("Skipping the tests since importing from faceverify.gabor_phase raised exception '%s'"%e)
 
     if self.skip_tests:
       raise SkipTest("The 'ATNT_DATABASE_DIRECTORY' environment variable is not set, and the 'Database' directory is not found.")
@@ -131,7 +137,10 @@ class FaceVerifyExampleTest(unittest.TestCase):
 
   def test03_dct_ubm(self):
     # test the UBM/GMM algorithm
-    from faceverify.dct_ubm import load_images, extract_feature, train, enroll, stats, NUMBER_OF_GAUSSIANS, ATNT_IMAGE_DIRECTORY
+    try:
+      from faceverify.dct_ubm import load_images, extract_feature, train, enroll, stats, NUMBER_OF_GAUSSIANS, ATNT_IMAGE_DIRECTORY
+    except ImportError as e:
+      raise SkipTest("Skipping the tests since importing from faceverify.dct_ubm raised exception '%s'"%e)
 
     if self.skip_tests:
       raise SkipTest("The 'ATNT_DATABASE_DIRECTORY' environment variable is not set, and the 'Database' directory is not found.")
