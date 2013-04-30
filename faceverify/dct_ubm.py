@@ -4,6 +4,15 @@ import os, sys
 import numpy
 from matplotlib import pyplot
 
+# setup the logging system
+import logging
+formatter = logging.Formatter("%(name)s@%(asctime)s -- %(levelname)s: %(message)s")
+logger = logging.getLogger("bob")
+for handler in logger.handlers:
+  handler.setFormatter(formatter)
+logger.setLevel(logging.INFO)
+
+
 # This is the base directory where by default the AT&T images are found. You can
 # overwrite this  directory on the command line
 global ATNT_IMAGE_DIRECTORY
