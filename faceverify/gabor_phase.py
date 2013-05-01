@@ -1,3 +1,23 @@
+#!/usr/bin/env python
+# vim: set fileencoding=utf-8 :
+# @author: Manuel Guenther <Manuel.Guenther@idiap.ch>
+# @date: Wed May  1 11:33:00 CEST 2013
+#
+# Copyright (C) 2011-2013 Idiap Research Institute, Martigny, Switzerland
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 import bob
 import xbob.db.atnt
 import os, sys
@@ -58,6 +78,10 @@ def main():
   # check if the AT&T database directory is overwritten by the command line
   global ATNT_IMAGE_DIRECTORY
   if len(sys.argv) > 1:
+    if sys.argv[1].lower() in ('-h', '--help'):
+      print "Usage:", sys.argv[0], "[DatabaseDirectory]"
+      print "  NOTE: DatabaseDirectory defaults to the './Database' or to the environment variable 'ATNT_DATABASE_DIRECTORY', if set"
+      return
     ATNT_IMAGE_DIRECTORY = sys.argv[1]
 
   # check if the database directory exists
@@ -100,7 +124,11 @@ def main():
   similarity_function = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.PHASE_DIFF)
 
   # iterate through models and probes and compute scores
+  model_count = 1
   for model_key, model_feature in model_features.iteritems():
+    print "\rModel", model_count, "of", len(model_features),
+    sys.stdout.flush()
+    model_count += 1
     for probe_key, probe_feature in probe_features.iteritems():
       # compute score using the desired Gabor jet similarity function
       score = graph_machine.similarity(model_feature, probe_feature, similarity_function)
@@ -111,7 +139,7 @@ def main():
       else:
         negative_scores.append(score)
 
-  print "Evaluation"
+  print "\nEvaluation"
   # convert list of scores to numpy arrays
   positives = numpy.array(positive_scores)
   negatives = numpy.array(negative_scores)

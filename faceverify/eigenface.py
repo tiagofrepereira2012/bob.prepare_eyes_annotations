@@ -1,3 +1,23 @@
+#!/usr/bin/env python
+# vim: set fileencoding=utf-8 :
+# @author: Manuel Guenther <Manuel.Guenther@idiap.ch>
+# @date: Wed May  1 11:33:00 CEST 2013
+#
+# Copyright (C) 2011-2013 Idiap Research Institute, Martigny, Switzerland
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 import bob
 import xbob.db.atnt
 import os, sys
@@ -8,7 +28,6 @@ from matplotlib import pyplot
 # overwrite this  directory on the command line
 global ATNT_IMAGE_DIRECTORY
 ATNT_IMAGE_DIRECTORY = os.environ['ATNT_DATABASE_DIRECTORY'] if 'ATNT_DATABASE_DIRECTORY' in os.environ else "Database"
-
 
 # The default file name extension of the AT&T images
 ATNT_IMAGE_EXTENSION = ".pgm"
@@ -68,6 +87,10 @@ def main():
   # check if the AT&T database directory is overwritten by the command line
   global ATNT_IMAGE_DIRECTORY
   if len(sys.argv) > 1:
+    if sys.argv[1].lower() in ('-h', '--help'):
+      print "Usage:", sys.argv[0], "[DatabaseDirectory]"
+      print "  NOTE: DatabaseDirectory defaults to the './Database' or to the environment variable 'ATNT_DATABASE_DIRECTORY', if set"
+      return
     ATNT_IMAGE_DIRECTORY = sys.argv[1]
 
   # check if the database directory exists
