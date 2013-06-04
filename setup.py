@@ -28,7 +28,7 @@ setup(
     # This is the basic information about your project. Modify all this
     # information before releasing code publicly.
     name='bob.example.faceverify',
-    version='0.4.0',
+    version='0.4.1',
     description='Example for using Bob to create face verification systems',
     url='http://pypi.python.org/pypi/bob.example.faceverify',
     license='GPLv3',
@@ -61,7 +61,7 @@ setup(
     entry_points={
       'console_scripts': [
         'eigenface.py = faceverify.eigenface:main',
-        'gabor_phase.py = faceverify.gabor_phase:main',
+        'gabor_graph.py = faceverify.gabor_graph:main',
         'dct_ubm.py = faceverify.dct_ubm:main'
         ],
 

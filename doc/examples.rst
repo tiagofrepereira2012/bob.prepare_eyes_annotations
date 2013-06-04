@@ -19,12 +19,12 @@ There are three example scripts:
 .. code-block:: sh
 
   $ ./bin/eigenface.py
-  $ ./bin/gabor_phase.py
+  $ ./bin/gabor_graph.py
   $ ./bin/dct_ubm.py
 
 that perform more or less complicated face verification experiments.
 Each experiment creates an ROC curve that contains the final verification result of the test.
-The generated files will be ``eigenface.png``, ``gabor_phase.png``, and ``dct_ubm.png``.
+The generated files will be ``eigenface.png``, ``gabor_graph.png``, and ``dct_ubm.png``.
 
 Since the complexity of the algorithms increase, the expected execution time of them differ a lot.
 While the eigenface example should be finished in a couple of seconds, the Gabor phase example could take some minutes, and the UBM/GMM model needs in the order of half an hour to compute.
@@ -107,25 +107,25 @@ and the performance is computed:
   >>> threshold = bob.measure.eer_threshold(negatives, positives)
   >>> FAR, FRR = bob.measure.farfrr(negatives, positives, threshold)
 
-The expected result is: FAR 83.6% and FRR 83.6% at distance threshold 2048.9
+The expected result is: FAR 16.4% and FRR 16.4% at distance threshold -2048.9
 
 .. note::
 
   Computing eigenfaces with such a low amount of training data is usually not an excellent idea.
-  Hence, the performance in this example is extremely poor.
+  Hence, the performance in this example is relatively poor.
 
 
 Gabor jet comparisons
 ~~~~~~~~~~~~~~~~~~~~~
 A better face verification example uses Gabor jet features [WFKM97]_ .
-In this example we do not define a face graph, but instead we use the Gabor jets at all positions in the image.
+In this example we do not define a face graph, but instead we use the Gabor jets at several grid positions in the image.
 To do that, we define:
 
 .. code-block:: python
 
-  >>> graph_machine = bob.machine.GaborGraphMachine((0,0), (111,91), (1,1))
+  >>> graph_machine = bob.machine.GaborGraphMachine((8,6), (104,86), (4,4))
 
-that will create Gabor graphs with node positions from (0,0) to (111,91) with step size (1,1), i.e., a tight Gabor grid graph covering the whole image.
+that will create Gabor graphs with node positions from (8,6) to (104,86) with step size (4,4).
 
 .. note::
 
@@ -155,7 +155,7 @@ Now, the Gabor graph features can be extracted from the model and probe images:
 
 To compare the Gabor graphs, several methods can be applied.
 Here, we chose to compute the similarity of two graphs as the average of corresponding Gabor jet similarities.
-Again, many choices for the Gabor jet comparison exist, here we take the novel Gabor phase based similarity function [GHW12]_:
+Again, many choices for the Gabor jet comparison exist, here we take Canberra similarity function [GHW12]_:
 
 .. code-block:: python
 
@@ -164,13 +164,13 @@ Again, many choices for the Gabor jet comparison exist, here we take the novel G
   ...    score = graph_machine.similarity(model_feature, probe_feature, bob.machine.DisparityCorrectedPhaseDifference())
 
 The evaluation is identical to the evaluation in the eigenface example.
-Since this method is much better for suited for small image databases, the resulting verification rates are much better.
+Since this method is better for suited for small image databases, the resulting verification rates are better.
 The expected ROC curve is:
 
-.. image:: gabor_phase.png
+.. image:: gabor_graph.png
   :scale: 70 %
 
-while the expected verification result is: FAR 22% and FRR 22% at distance threshold 0.1799
+while the expected verification result is: FAR 13.1% and FRR 13.2% at distance threshold 0.6894
 
 
 The UBM/GMM modeling of DCT Blocks

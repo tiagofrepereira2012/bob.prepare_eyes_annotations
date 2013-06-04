@@ -135,8 +135,8 @@ def main():
   # iterate through models and probes and compute scores
   for model_key, model_feature in model_features.iteritems():
     for probe_key, probe_feature in probe_features.iteritems():
-      # compute score
-      score = distance_function(model_feature, probe_feature)
+      # compute score as the negative Euclidean distance
+      score = - distance_function(model_feature, probe_feature)
 
       # check if this is a positive score
       if atnt_db.get_client_id_from_file_id(model_key) == atnt_db.get_client_id_from_file_id(probe_key):

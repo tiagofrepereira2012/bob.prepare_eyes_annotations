@@ -21,7 +21,7 @@
 import bob
 import xbob.db.atnt
 import os, sys
-import numpy
+import numpy, math
 from matplotlib import pyplot
 
 # This is the base directory where by default the AT&T images are found. You can
@@ -32,6 +32,7 @@ ATNT_IMAGE_DIRECTORY = os.environ['ATNT_DATABASE_DIRECTORY'] if 'ATNT_DATABASE_D
 # The default file name extension of the AT&T images
 ATNT_IMAGE_EXTENSION = ".pgm"
 
+preprocessor = bob.ip.TanTriggs()
 
 def load_images(db, group = None, purpose = None):
   """Reads the images for the given group and the given purpose from the given database"""
@@ -42,11 +43,13 @@ def load_images(db, group = None, purpose = None):
   for k in files:
     # load image and linearize it into a vector
     images[k.id] = bob.io.load(k.make_path(ATNT_IMAGE_DIRECTORY, ATNT_IMAGE_EXTENSION)).astype(numpy.float64)
+    # preprocess the images
+    images[k.id] = preprocessor(images[k.id])
   return images
 
 
 # define Gabor wavelet transform class globally since it is reused for all images
-gabor_wavelet_transform = bob.ip.GaborWaveletTransform()
+gabor_wavelet_transform = bob.ip.GaborWaveletTransform(k_max = 0.25 * math.pi)
 # create empty Gabor jet image including Gabor phases in the required size
 jet_image = gabor_wavelet_transform.empty_jet_image(numpy.ndarray((112,92)), True)
 
@@ -96,7 +99,7 @@ def main():
 
   print "Creating Gabor graph machine"
   # create a machine that will produce tight Gabor graphs with inter-node distance (1,1)
-  graph_machine = bob.machine.GaborGraphMachine((0,0), (111,91), (1,1))
+  graph_machine = bob.machine.GaborGraphMachine((8,6), (104,86), (4,4))
 
   #####################################################################
   ### extract Gabor graph features for all model and probe images
@@ -121,7 +124,7 @@ def main():
 
   print "Computing scores"
   # define a certain Gabor jet similarity function that should be used
-  similarity_function = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.PHASE_DIFF)
+  similarity_function = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.CANBERRA)
 
   # iterate through models and probes and compute scores
   model_count = 1
@@ -159,8 +162,8 @@ def main():
   pyplot.axis([0, 100, 0, 100]) #xmin, xmax, ymin, ymax
 
   # save plot to file
-  pyplot.savefig("gabor_phase.png")
-  print "Saved figure 'gabor_phase.png'"
+  pyplot.savefig("gabor_graph.png")
+  print "Saved figure 'gabor_graph.png'"
 
   # show ROC curve.
   # enable it if you like. This will open a window and display the ROC curve
