@@ -63,7 +63,7 @@ which is used to train a ``bob.machine.LinearMachine``:
 
 .. code-block:: python
 
-  >>> pca_trainer = bob.trainer.SVDPCATrainer()
+  >>> pca_trainer = bob.trainer.PCATrainer()
   >>> pca_machine, eigen_values = pca_trainer.train(training_set)
 
 For some distance functions, the eigenvalues are needed, but in our example we just ignore them.

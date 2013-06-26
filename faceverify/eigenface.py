@@ -50,14 +50,14 @@ KEPT_EIGENFACES = 5
 
 def train(training_images):
   """Trains the PCA module with the given list of training images"""
-  # perform training using a SVD PCA trainer
-  pca_trainer = bob.trainer.SVDPCATrainer()
+  # perform training using a PCA trainer
+  pca_trainer = bob.trainer.PCATrainer()
 
   # create array set used for training
   # iterate through the training examples and linearize the images
   training_set = numpy.vstack([image.flatten() for image in training_images.values()])
 
-  # training the SVD PCA returns a machine that can be used for projection
+  # training the PCA returns a machine that can be used for projection
   pca_machine, eigen_values = pca_trainer.train(training_set)
 
   # limit the number of kept eigenfaces
