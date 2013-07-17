@@ -152,25 +152,25 @@ class FaceVerifyExampleTest(unittest.TestCase):
     keys = sorted(images.keys())
     self.assertEqual(len(images), 200)
 
-    extract_feature(images[1])
+    # test that the original DCT extraction works
+    dct_feature = extract_feature(images[1])
+    if regenerate_references:
+      bob.io.save(dct_feature, self.resource('dct_feature.hdf5'))
+
+    feature_ref = bob.io.load(self.resource('dct_feature.hdf5'))
+    self.assertTrue(numpy.allclose(feature_ref, dct_feature))
 
     # extract features for several images
 #    features = {i : extract_feature(images[i]) for i in keys[:13]}
     features = {}
     for i in keys[:13]: features[i] = extract_feature(images[i])
 
-    if regenerate_references:
-      bob.io.save(features[1], self.resource('dct_feature.hdf5'))
 
-    feature_ref = bob.io.load(self.resource('dct_feature.hdf5'))
-    self.assertTrue(numpy.allclose(feature_ref, features[1]))
-
-    # train the UBM with several features, and a limited numebr of Gaussians
-    NUMBER_OF_GAUSSIANS = 2
+    # train the UBM with several features, and a limited number of Gaussians
 #    ubm = train({i : features[i] for i in keys[:10]})
     trainset = {}
     for i in keys[:10]: trainset[i] = features[i]
-    ubm = train(trainset)
+    ubm = train(trainset, number_of_gaussians = 2)
     if regenerate_references:
       ubm.save(bob.io.HDF5File(self.resource('dct_ubm.hdf5'), 'w'))
 
@@ -203,5 +203,5 @@ class FaceVerifyExampleTest(unittest.TestCase):
 
     # compute score
     score = bob.machine.linear_scoring([model], ubm, [probe])[0,0]
-    self.assertAlmostEqual(score, 43049.56532399742)
+    self.assertAlmostEqual(score, 6975.2165874138391)
 

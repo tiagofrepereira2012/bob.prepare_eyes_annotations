@@ -73,7 +73,7 @@ def extract_feature(image):
 # Parameters of the UBM/GMM module training
 NUMBER_OF_GAUSSIANS = 100
 
-def train(training_features):
+def train(training_features, number_of_gaussians = NUMBER_OF_GAUSSIANS):
   """Trains the UBM/GMM module with the given set of training DCT features"""
 
   # create array set used for training
@@ -81,8 +81,8 @@ def train(training_features):
 
   input_size = training_set.shape[1]
   # create the KMeans and UBM machine
-  kmeans = bob.machine.KMeansMachine(NUMBER_OF_GAUSSIANS, input_size)
-  ubm = bob.machine.GMMMachine(NUMBER_OF_GAUSSIANS, input_size)
+  kmeans = bob.machine.KMeansMachine(number_of_gaussians, input_size)
+  ubm = bob.machine.GMMMachine(number_of_gaussians, input_size)
 
   # create the KMeansTrainer
   kmeans_trainer = bob.trainer.KMeansTrainer()
