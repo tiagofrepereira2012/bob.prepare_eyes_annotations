@@ -21,7 +21,7 @@
 import bob
 import xbob.db.atnt
 import os, sys
-import numpy
+import numpy, numpy.linalg
 from matplotlib import pyplot
 
 # This is the base directory where by default the AT&T images are found. You can
@@ -130,7 +130,7 @@ def main():
   negative_scores = []
 
   print "Computing scores"
-  distance_function = bob.math.euclidean_distance
+  distance_function = (lambda x,y: numpy.linalg.norm(x - y))
 
   # iterate through models and probes and compute scores
   for model_key, model_feature in model_features.iteritems():

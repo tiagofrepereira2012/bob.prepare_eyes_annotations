@@ -25,7 +25,7 @@ import unittest
 from nose.plugins.skip import SkipTest
 
 import bob
-import numpy
+import numpy, numpy.linalg
 
 import xbob.db.atnt
 
@@ -92,7 +92,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
     self.assertTrue(numpy.allclose(probe_ref, probe))
 
     # compute score
-    score = bob.math.euclidean_distance(model, probe)
+    score = numpy.linalg.norm(model - probe)
     self.assertAlmostEqual(score, 3498.308154114)
 
 

@@ -28,7 +28,7 @@ setup(
     # This is the basic information about your project. Modify all this
     # information before releasing code publicly.
     name='bob.example.faceverify',
-    version='0.4.1',
+    version='0.4.2',
     description='Example for using Bob to create face verification systems',
     url='http://pypi.python.org/pypi/bob.example.faceverify',
     license='GPLv3',
