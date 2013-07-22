@@ -22,7 +22,7 @@ There are three example scripts:
   $ ./bin/gabor_graph.py
   $ ./bin/dct_ubm.py
 
-that perform more or less complicated face verification experiments.
+that perform more or less complicated face verification experiments using an *unbiased* evaluation protocol.
 Each experiment creates an ROC curve that contains the final verification result of the test.
 The generated files will be ``eigenface.png``, ``gabor_graph.png``, and ``dct_ubm.png``.
 
@@ -42,7 +42,7 @@ First, it creates an object to query the database:
 
 .. code-block:: python
 
-  >>> atnt_db = bob.db.atnt.Database()
+  >>> atnt_db = xbob.db.atnt.Database()
 
 For training the projection matrix, the training images need to be read:
 

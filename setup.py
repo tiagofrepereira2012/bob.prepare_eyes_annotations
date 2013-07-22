@@ -27,10 +27,10 @@ setup(
 
     # This is the basic information about your project. Modify all this
     # information before releasing code publicly.
-    name='bob.example.faceverify',
-    version='0.4.2',
+    name='xbob.example.faceverify',
+    version='0.5.0',
     description='Example for using Bob to create face verification systems',
-    url='http://pypi.python.org/pypi/bob.example.faceverify',
+    url='http://pypi.python.org/pypi/xbob.example.faceverify',
     license='GPLv3',
     author='Manuel Guenther',
     author_email='manuel.guenther@idiap.ch',
@@ -50,8 +50,16 @@ setup(
 
     install_requires=[
         "setuptools",
-        "bob >= 1.2.0a0",               # base signal proc./machine learning library
+        "bob >= 1.2.0",               # base signal proc./machine learning library
         "xbob.db.atnt",               # the AT&T (ORL) database of images
+    ],
+
+    # This package is good examples of namespace implementations
+    # using several layers. You can check them out here:
+    # https://github.com/idiap/bob/wiki/Satellite-Packages
+    namespace_packages = [
+      'xbob',
+      'xbob.example',
     ],
 
     # This entry defines which scripts you will have inside the 'bin' directory
@@ -60,14 +68,14 @@ setup(
     #   script-name-at-bin-directory = module.at.your.library:function
     entry_points={
       'console_scripts': [
-        'eigenface.py = faceverify.eigenface:main',
-        'gabor_graph.py = faceverify.gabor_graph:main',
-        'dct_ubm.py = faceverify.dct_ubm:main'
+        'eigenface.py = xbob.example.faceverify.eigenface:main',
+        'gabor_graph.py = xbob.example.faceverify.gabor_graph:main',
+        'dct_ubm.py = xbob.example.faceverify.dct_ubm:main'
         ],
 
        # bob unittest declaration
       'bob.test': [
-        'faceverify = faceverify.tests:FaceVerifyExampleTest',
+        'faceverify = xbob.example.faceverify.tests:FaceVerifyExampleTest',
         ],
      },
 

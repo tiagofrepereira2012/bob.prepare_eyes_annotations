@@ -30,7 +30,7 @@ import numpy, numpy.linalg
 import xbob.db.atnt
 
 import pkg_resources
-import faceverify
+import xbob.example.faceverify
 
 
 regenerate_references = False
@@ -49,13 +49,13 @@ class FaceVerifyExampleTest(unittest.TestCase):
         self.skip_tests = True
 
   def resource(self, f):
-    return pkg_resources.resource_filename('faceverify.tests', f)
+    return pkg_resources.resource_filename('xbob.example.faceverify.tests', f)
 
 
   def test01_eigenface(self):
     # test the eigenface algorithm
     try:
-      from faceverify.eigenface import load_images, train, extract_feature, DISTANCE_FUNCTION
+      from xbob.example.faceverify.eigenface import load_images, train, extract_feature, DISTANCE_FUNCTION
     except ImportError as e:
       raise SkipTest("Skipping the tests since importing from faceverify.eigenface raised exception '%s'"%e)
 
@@ -99,7 +99,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
   def test02_gabor_graph(self):
     # test the gabor phase algorithm
     try:
-      from faceverify.gabor_graph import load_images, extract_feature, ATNT_IMAGE_DIRECTORY, SIMILARITY_FUNCTION
+      from xbob.example.faceverify.gabor_graph import load_images, extract_feature, ATNT_IMAGE_DIRECTORY, SIMILARITY_FUNCTION
     except ImportError as e:
       raise SkipTest("Skipping the tests since importing from faceverify.gabor_phase raised exception '%s'"%e)
 
@@ -137,7 +137,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
   def test03_dct_ubm(self):
     # test the UBM/GMM algorithm
     try:
-      from faceverify.dct_ubm import load_images, extract_feature, train, enroll, stats, NUMBER_OF_GAUSSIANS, ATNT_IMAGE_DIRECTORY
+      from xbob.example.faceverify.dct_ubm import load_images, extract_feature, train, enroll, stats, NUMBER_OF_GAUSSIANS, ATNT_IMAGE_DIRECTORY
     except ImportError as e:
       raise SkipTest("Skipping the tests since importing from faceverify.dct_ubm raised exception '%s'"%e)
 
