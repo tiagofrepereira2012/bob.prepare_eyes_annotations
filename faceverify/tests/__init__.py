@@ -55,7 +55,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
   def test01_eigenface(self):
     # test the eigenface algorithm
     try:
-      from faceverify.eigenface import load_images, train, extract_feature
+      from faceverify.eigenface import load_images, train, extract_feature, DISTANCE_FUNCTION
     except ImportError as e:
       raise SkipTest("Skipping the tests since importing from faceverify.eigenface raised exception '%s'"%e)
 
@@ -92,7 +92,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
     self.assertTrue(numpy.allclose(probe_ref, probe))
 
     # compute score
-    score = numpy.linalg.norm(model - probe)
+    score = DISTANCE_FUNCTION(model, probe)
     self.assertAlmostEqual(score, 3498.308154114)
 
 
