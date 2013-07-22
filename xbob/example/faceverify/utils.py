@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 # @author: Manuel Guenther <Manuel.Guenther@idiap.ch>
-# @date: Wed May  1 11:33:00 CEST 2013
+# @date: Mon Jul 22 19:56:11 CEST 2013
 #
 # Copyright (C) 2011-2013 Idiap Research Institute, Martigny, Switzerland
 #
@@ -22,18 +22,27 @@ import os
 def atnt_database_directory(atnt_user_directory = None):
   """Checks, where the AT&T database is located and downloads it on need."""
   if atnt_user_directory:
+    # a user directory is specified
     atnt_default_directory = atnt_user_directory
+  elif 'ATNT_DATABASE_DIRECTORY' in os.environ:
+    # the environment variable is set
+    atnt_default_directory = os.environ['ATNT_DATABASE_DIRECTORY']
   else:
-    atnt_default_directory = os.environ['ATNT_DATABASE_DIRECTORY'] if 'ATNT_DATABASE_DIRECTORY' in os.environ else "Database"
+    atnt_default_directory = 'Database'
 
+  # Check if the database is already in the specified directory
   if os.path.isdir(atnt_default_directory) and set(['s%d'%s for s in range(1,41)]).issubset(os.listdir(atnt_default_directory)):
     return atnt_default_directory
 
+  # ... download the database ...
+
+  # create directory
   if not os.path.exists(atnt_default_directory):
     os.mkdir(atnt_default_directory)
 
+  # setup
   import urllib2, tempfile
-  db_url = "http://www.cl.cam.ac.uk/Research/DTG/attarchive/pub/data/att_faces.zip"
+  db_url = 'http://www.cl.cam.ac.uk/Research/DTG/attarchive/pub/data/att_faces.zip'
   import logging
   logger = logging.getLogger('bob')
   logger.warn("Downloading the AT&T database from '%s' to '%s' ..." % (db_url, atnt_default_directory))
@@ -50,6 +59,8 @@ def atnt_database_directory(atnt_user_directory = None):
   zip = zipfile.ZipFile(local_zip_file)
   zip.extractall(atnt_default_directory)
   zip.close()
+
+  # remove temporary zip file
   os.remove(local_zip_file)
 
   return atnt_default_directory
