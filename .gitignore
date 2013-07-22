@@ -10,4 +10,5 @@ bob.example.faceverify.egg-info/
 src/
 bin/
 dist/
-Database
+sphinx/
+Database/

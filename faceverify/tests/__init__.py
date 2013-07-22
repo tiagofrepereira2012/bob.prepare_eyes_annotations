@@ -96,10 +96,10 @@ class FaceVerifyExampleTest(unittest.TestCase):
     self.assertAlmostEqual(score, 3498.308154114)
 
 
-  def test02_gabor_phase(self):
+  def test02_gabor_graph(self):
     # test the gabor phase algorithm
     try:
-      from faceverify.gabor_phase import load_images, extract_feature, ATNT_IMAGE_DIRECTORY
+      from faceverify.gabor_graph import load_images, extract_feature, ATNT_IMAGE_DIRECTORY, SIMILARITY_FUNCTION
     except ImportError as e:
       raise SkipTest("Skipping the tests since importing from faceverify.gabor_phase raised exception '%s'"%e)
 
@@ -113,11 +113,11 @@ class FaceVerifyExampleTest(unittest.TestCase):
     self.assertEqual(len(images), 200)
 
     # extract features; for test purposes we wil use smaller features with inter-node-distance 8
-    graph = bob.machine.GaborGraphMachine((0,0), (111,91), (8,8))
+    graph_machine = bob.machine.GaborGraphMachine((0,0), (111,91), (8,8))
 
     # check the the projection is the same
-    model = extract_feature(images[1], graph)
-    probe = extract_feature(images[2], graph)
+    model = extract_feature(images[1], graph_machine)
+    probe = extract_feature(images[2], graph_machine)
 
     if regenerate_references:
       bob.io.save(model, self.resource('gabor_model.hdf5'))
@@ -130,9 +130,8 @@ class FaceVerifyExampleTest(unittest.TestCase):
     self.assertTrue(numpy.allclose(probe_ref, probe))
 
     # compute score
-    similarity_function = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.PHASE_DIFF)
-    score = graph.similarity(model, probe, similarity_function)
-    self.assertAlmostEqual(score, 0.110043015)
+    score = graph_machine.similarity(model, probe, SIMILARITY_FUNCTION)
+    self.assertAlmostEqual(score, 0.66058309)
 
 
   def test03_dct_ubm(self):

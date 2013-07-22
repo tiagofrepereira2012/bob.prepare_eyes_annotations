@@ -72,6 +72,9 @@ def extract_feature(image, graph_machine):
   return gabor_graph
 
 
+# define a certain Gabor jet similarity function that should be used
+SIMILARITY_FUNCTION = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.CANBERRA)
+
 def main():
   """This function will perform Gabor graph comparison test on the AT&T database"""
 
@@ -98,7 +101,7 @@ def main():
   # for Gabor graphs, no training is required.
 
   print "Creating Gabor graph machine"
-  # create a machine that will produce tight Gabor graphs with inter-node distance (1,1)
+  # create a machine that will produce tight Gabor graphs with inter-node distance (4,4)
   graph_machine = bob.machine.GaborGraphMachine((8,6), (104,86), (4,4))
 
   #####################################################################
@@ -123,8 +126,6 @@ def main():
   negative_scores = []
 
   print "Computing scores"
-  # define a certain Gabor jet similarity function that should be used
-  similarity_function = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.CANBERRA)
 
   # iterate through models and probes and compute scores
   model_count = 1
@@ -134,7 +135,7 @@ def main():
     model_count += 1
     for probe_key, probe_feature in probe_features.iteritems():
       # compute score using the desired Gabor jet similarity function
-      score = graph_machine.similarity(model_feature, probe_feature, similarity_function)
+      score = graph_machine.similarity(model_feature, probe_feature, SIMILARITY_FUNCTION)
 
       # check if this is a positive score
       if atnt_db.get_client_id_from_file_id(model_key) == atnt_db.get_client_id_from_file_id(probe_key):
