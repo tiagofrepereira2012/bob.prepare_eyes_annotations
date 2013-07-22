@@ -24,17 +24,13 @@ import os, sys
 import numpy, math
 from matplotlib import pyplot
 
-# This is the base directory where by default the AT&T images are found. You can
-# overwrite this  directory on the command line
-global ATNT_IMAGE_DIRECTORY
-ATNT_IMAGE_DIRECTORY = os.environ['ATNT_DATABASE_DIRECTORY'] if 'ATNT_DATABASE_DIRECTORY' in os.environ else "Database"
+from .utils import atnt_database_directory
 
-# The default file name extension of the AT&T images
-ATNT_IMAGE_EXTENSION = ".pgm"
 
+# To preprocess the AT&T images, we use the TanTriggs algorithm
 preprocessor = bob.ip.TanTriggs()
 
-def load_images(db, group = None, purpose = None):
+def load_images(db, group = None, purpose = None, database_directory = None, image_extension = '.pgm'):
   """Reads the images for the given group and the given purpose from the given database"""
   # get the file names from the database
   files = db.objects(groups = group, purposes = purpose)
@@ -42,7 +38,7 @@ def load_images(db, group = None, purpose = None):
   images = {}
   for k in files:
     # load image and linearize it into a vector
-    images[k.id] = bob.io.load(k.make_path(ATNT_IMAGE_DIRECTORY, ATNT_IMAGE_EXTENSION)).astype(numpy.float64)
+    images[k.id] = bob.io.load(k.make_path(database_directory, image_extension)).astype(numpy.float64)
     # preprocess the images
     images[k.id] = preprocessor(images[k.id])
   return images
@@ -76,24 +72,15 @@ def extract_feature(image, graph_machine):
 SIMILARITY_FUNCTION = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.CANBERRA)
 
 def main():
-  """This function will perform Gabor graph comparison test on the AT&T database"""
+  """This function will perform Gabor graph comparison test on the AT&T database."""
 
   # use the bob.db interface to retrieve information about the Database
   atnt_db = xbob.db.atnt.Database()
 
-  # check if the AT&T database directory is overwritten by the command line
-  global ATNT_IMAGE_DIRECTORY
-  if len(sys.argv) > 1:
-    if sys.argv[1].lower() in ('-h', '--help'):
-      print "Usage:", sys.argv[0], "[DatabaseDirectory]"
-      print "  NOTE: DatabaseDirectory defaults to the './Database' or to the environment variable 'ATNT_DATABASE_DIRECTORY', if set"
-      return
-    ATNT_IMAGE_DIRECTORY = sys.argv[1]
+  # Check the existence of the AT&T database and download it if not
+  # Also check if the AT&T database directory is overwritten by the command line
+  image_directory = atnt_database_directory(sys.argv[1] if len(sys.argv) > 1 else None)
 
-  # check if the database directory exists
-  if not os.path.isdir(ATNT_IMAGE_DIRECTORY):
-    print "The database directory '" + ATNT_IMAGE_DIRECTORY + "' does not exists!"
-    return
 
   #####################################################################
   ### Training
@@ -107,8 +94,8 @@ def main():
   #####################################################################
   ### extract Gabor graph features for all model and probe images
   # load all model and probe images
-  model_images = load_images(atnt_db, group = 'dev', purpose = 'enrol')
-  probe_images = load_images(atnt_db, group = 'dev', purpose = 'probe')
+  model_images = load_images(atnt_db, group = 'dev', purpose = 'enrol', database_directory = image_directory)
+  probe_images = load_images(atnt_db, group = 'dev', purpose = 'probe', database_directory = image_directory)
 
   print "Extracting models"
   model_features = {}

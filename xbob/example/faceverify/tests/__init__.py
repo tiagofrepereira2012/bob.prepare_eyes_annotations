@@ -40,17 +40,35 @@ class FaceVerifyExampleTest(unittest.TestCase):
   """Performs various tests for the face verification examples."""
 
   def setUp(self):
-    self.skip_tests = False
-    if not os.path.exists('Database') and not 'ATNT_DATABASE_DIRECTORY' in os.environ:
-      if os.path.exists('/idiap/group/biometric/databases/orl'):
-        # we are at Idiap, so we select the right directory
-        os.environ['ATNT_DATABASE_DIRECTORY'] = '/idiap/group/biometric/databases/orl'
-      else:
-        self.skip_tests = True
+    # downloads the database into a temporary directory
+    self.m_temp_dir = None
+    if os.path.exists('Database'):
+      self.m_database_dir = 'Database'
+    elif 'ATNT_DATABASE_DIRECTORY' in os.environ:
+      self.m_database_dir = os.environ['ATNT_DATABASE_DIRECTORY']
+    elif os.path.exists('/idiap/group/biometric/databases/orl'):
+      self.m_database_dir = '/idiap/group/biometric/databases/orl'
+    else:
+      import tempfile
+      self.m_temp_dir = tempfile.mkdtemp('xbob_atnt_db')
+      from xbob.example.faceverify.utils import atnt_database_directory
+      self.m_database_dir = atnt_database_directory(self.m_temp_dir)
+
+  def tearDown(self):
+    if self.m_temp_dir:
+      import shutil
+      shutil.rmtree(self.m_temp_dir)
 
   def resource(self, f):
     return pkg_resources.resource_filename('xbob.example.faceverify.tests', f)
 
+  def test00_database(self):
+    # test that the database exists
+    subdirs = ['s%d'%s for s in range(1,41)]
+    files = ['%d.pgm'%s for s in range(1,11)]
+    self.assertTrue(set(subdirs).issubset(os.listdir(self.m_database_dir)))
+    for d in subdirs:
+      self.assertTrue(set(files).issubset(os.listdir(os.path.join(self.m_database_dir,d))))
 
   def test01_eigenface(self):
     # test the eigenface algorithm
@@ -59,13 +77,10 @@ class FaceVerifyExampleTest(unittest.TestCase):
     except ImportError as e:
       raise SkipTest("Skipping the tests since importing from faceverify.eigenface raised exception '%s'"%e)
 
-    if self.skip_tests:
-      raise SkipTest("The 'ATNT_DATABASE_DIRECTORY' environment variable is not set, and the 'Database' directory is not found.")
-
     # open database
     atnt_db = xbob.db.atnt.Database()
     # test if all training images are loaded
-    images = load_images(atnt_db, group = 'world')
+    images = load_images(atnt_db, group = 'world', database_directory = self.m_database_dir)
     self.assertEqual(len(images), 200)
 
     # test that the training works (for speed reasons, we limit the number of training files)
@@ -99,17 +114,14 @@ class FaceVerifyExampleTest(unittest.TestCase):
   def test02_gabor_graph(self):
     # test the gabor phase algorithm
     try:
-      from xbob.example.faceverify.gabor_graph import load_images, extract_feature, ATNT_IMAGE_DIRECTORY, SIMILARITY_FUNCTION
+      from xbob.example.faceverify.gabor_graph import load_images, extract_feature, SIMILARITY_FUNCTION
     except ImportError as e:
       raise SkipTest("Skipping the tests since importing from faceverify.gabor_phase raised exception '%s'"%e)
-
-    if self.skip_tests:
-      raise SkipTest("The 'ATNT_DATABASE_DIRECTORY' environment variable is not set, and the 'Database' directory is not found.")
 
     # open database
     atnt_db = xbob.db.atnt.Database()
     # test if all training images are loaded
-    images = load_images(atnt_db, group = 'world')
+    images = load_images(atnt_db, group = 'world', database_directory = self.m_database_dir)
     self.assertEqual(len(images), 200)
 
     # extract features; for test purposes we wil use smaller features with inter-node-distance 8
@@ -137,17 +149,14 @@ class FaceVerifyExampleTest(unittest.TestCase):
   def test03_dct_ubm(self):
     # test the UBM/GMM algorithm
     try:
-      from xbob.example.faceverify.dct_ubm import load_images, extract_feature, train, enroll, stats, NUMBER_OF_GAUSSIANS, ATNT_IMAGE_DIRECTORY
+      from xbob.example.faceverify.dct_ubm import load_images, extract_feature, train, enroll, stats, NUMBER_OF_GAUSSIANS
     except ImportError as e:
       raise SkipTest("Skipping the tests since importing from faceverify.dct_ubm raised exception '%s'"%e)
-
-    if self.skip_tests:
-      raise SkipTest("The 'ATNT_DATABASE_DIRECTORY' environment variable is not set, and the 'Database' directory is not found.")
 
     # open database
     atnt_db = xbob.db.atnt.Database()
     # test if all training images are loaded
-    images = load_images(atnt_db, group = 'world')
+    images = load_images(atnt_db, group = 'world', database_directory = self.m_database_dir)
     keys = sorted(images.keys())
     self.assertEqual(len(images), 200)
 

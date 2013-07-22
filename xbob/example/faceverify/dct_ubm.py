@@ -24,6 +24,9 @@ import os, sys
 import numpy
 from matplotlib import pyplot
 
+from .utils import atnt_database_directory
+
+
 # setup the logging system
 import logging
 formatter = logging.Formatter("%(name)s@%(asctime)s -- %(levelname)s: %(message)s")
@@ -33,16 +36,7 @@ for handler in logger.handlers:
 logger.setLevel(logging.INFO)
 
 
-# This is the base directory where by default the AT&T images are found. You can
-# overwrite this  directory on the command line
-global ATNT_IMAGE_DIRECTORY
-ATNT_IMAGE_DIRECTORY = os.environ['ATNT_DATABASE_DIRECTORY'] if 'ATNT_DATABASE_DIRECTORY' in os.environ else "Database"
-
-# The default file name extension of the AT&T images
-ATNT_IMAGE_EXTENSION = ".pgm"
-
-
-def load_images(db, group = None, purpose = None, client_id = None):
+def load_images(db, group = None, purpose = None, client_id = None, database_directory = None, image_extension = '.pgm'):
   """Reads the images for the given group and the given client id from the given database"""
   # get the file names from the database
   files = db.objects(groups = group, purposes = purpose, model_ids = client_id)
@@ -50,7 +44,7 @@ def load_images(db, group = None, purpose = None, client_id = None):
   images = {}
   for k in files:
     # load image and linearize it into a vector
-    images[k.id] = bob.io.load(k.make_path(ATNT_IMAGE_DIRECTORY, ATNT_IMAGE_EXTENSION)).astype(numpy.float64)
+    images[k.id] = bob.io.load(k.make_path(database_directory, image_extension)).astype(numpy.float64)
   return images
 
 
@@ -138,24 +132,15 @@ def main():
   # use the bob.db interface to retrieve information about the Database
   atnt_db = xbob.db.atnt.Database()
 
-  # check if the AT&T database directory is overwritten by the command line
-  global ATNT_IMAGE_DIRECTORY
-  if len(sys.argv) > 1:
-    if sys.argv[1].lower() in ('-h', '--help'):
-      print "Usage:", sys.argv[0], "[DatabaseDirectory]"
-      print "  NOTE: DatabaseDirectory defaults to the './Database' or to the environment variable 'ATNT_DATABASE_DIRECTORY', if set"
-      return
-    ATNT_IMAGE_DIRECTORY = sys.argv[1]
+  # Check the existence of the AT&T database and download it if not
+  # Also check if the AT&T database directory is overwritten by the command line
+  image_directory = atnt_database_directory(sys.argv[1] if len(sys.argv) > 1 else None)
 
-  # check if the database directory exists
-  if not os.path.isdir(ATNT_IMAGE_DIRECTORY):
-    print "The database directory '" + ATNT_IMAGE_DIRECTORY + "' does not exists!"
-    return
 
   #####################################################################
   ### UBM Training
   # load all training images
-  training_images = load_images(atnt_db, group = 'world')
+  training_images = load_images(atnt_db, group = 'world', database_directory = image_directory)
 
   print "Extracting training features"
   training_features = {}
@@ -177,7 +162,7 @@ def main():
   models = {}
   for model_id in model_ids:
     # load images for the current model id
-    model_images = load_images(atnt_db, group = 'dev', purpose = 'enrol', client_id = model_id)
+    model_images = load_images(atnt_db, group = 'dev', purpose = 'enrol', client_id = model_id, database_directory = image_directory)
     models_for_current_id = {}
     # extract model features
     for key, image in model_images.iteritems():
@@ -190,7 +175,7 @@ def main():
   ### probe stats
 
   print "Computing probe statistics"
-  probe_images = load_images(atnt_db, group = 'dev', purpose = 'probe')
+  probe_images = load_images(atnt_db, group = 'dev', purpose = 'probe', database_directory = image_directory)
   probes = {}
   for key, image in probe_images.iteritems():
     # extract probe features
