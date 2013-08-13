@@ -82,13 +82,26 @@ After training, the model and probe images are loaded, linearized, and projected
   ...   probe_image = bob.io.load(filename)
   ...   probe_feature = pca_machine(probe_image.flatten())
 
+To follow the evaluation protocol, we *enroll* a client model for each client, simply by collecting all model feature vectors:
+
+.. code-block:: python
+
+  >>> model_ids = [client.id for client in atnt_db.clients(groups = 'dev')]
+  for model_feature_id in model_features:
+  ...   model_id = atnt_db.get_client_id_from_file_id(model_feature_id)
+  ...   models[model_id].append(model_features[model_feature_id])
+
+
 To compute the verification result, each model feature is compared to each probe feature by computing the Euclidean distance:
 
 .. code-block:: python
 
-  >>> for model_feature in model_features:
+  >>> for model in model:
   ...  for probe_feature in probe_features:
-  ...    score = bob.math.euclidean_distance(model_feature, probe_feature)
+  ...    for model_feature in model:
+  ...      score = bob.math.euclidean_distance(model_feature, probe_feature)
+
+Finally, all scores of one model and one probe are averaged to get the final score for this pair.
 
 The results are divided into a list of positive scores (model and probe are from the same identity) and a a list of negative scores (identities of model and probe differ).
 Using these lists, the ROC curve is plotted:

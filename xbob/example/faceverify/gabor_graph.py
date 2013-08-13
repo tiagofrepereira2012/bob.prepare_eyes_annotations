@@ -47,30 +47,24 @@ def load_images(db, group = None, purpose = None, database_directory = None, ima
 
 # define Gabor wavelet transform class globally since it is reused for all images
 gabor_wavelet_transform = bob.ip.GaborWaveletTransform(k_max = 0.25 * math.pi)
-# create empty Gabor jet image including Gabor phases in the required size
-jet_image = gabor_wavelet_transform.empty_jet_image(numpy.ndarray((112,92)), True)
+# create empty Gabor jet image including Gabor phases in the required size to avoid re-calculation
+gabor_jet_image = gabor_wavelet_transform.empty_jet_image(numpy.ndarray((112,92)), True)
 
 def extract_feature(image, graph_machine):
   """Extracts the Gabor graphs from the given image"""
 
-  # create extraction result in the desired size
-  shape = [graph_machine.number_of_nodes]
-  # add the shape of one Gabor jet
-  shape.extend(jet_image[0,0].shape)
-  gabor_graph = numpy.ndarray(shape, dtype = numpy.float64)
-
   # perform Gabor wavelet transform on the image
-  gabor_wavelet_transform.compute_jets(image, jet_image)
+  gabor_wavelet_transform.compute_jets(image, gabor_jet_image)
 
   # extract the Gabor graphs from the feature image
-  graph_machine(jet_image, gabor_graph)
+  gabor_graph = graph_machine(gabor_jet_image)
 
   # return the extracted graph
   return gabor_graph
 
 
 # define a certain Gabor jet similarity function that should be used
-SIMILARITY_FUNCTION = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.CANBERRA)
+SIMILARITY_FUNCTION = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.CANBERRA, gabor_wavelet_transform)
 
 def main():
   """This function will perform Gabor graph comparison test on the AT&T database."""
@@ -102,6 +96,16 @@ def main():
   model_features = {}
   for key, image in model_images.iteritems():
     model_features[key] = extract_feature(image, graph_machine)
+
+  # enroll models from 5 features by simply storing all features
+  model_ids = [client.id for client in atnt_db.clients(groups = 'dev')]
+  models = {model_id : [] for model_id in model_ids}
+  # iterate over model features
+  for key, image in model_features.iteritems():
+    model_id = atnt_db.get_client_id_from_file_id(key)
+    # "enroll" model by collecting all model features of this client
+    models[model_id].append(model_features[key])
+
   print("Extracting probes")
   probe_features = {}
   for key, image in probe_images.iteritems():
@@ -117,16 +121,23 @@ def main():
 
   # iterate through models and probes and compute scores
   model_count = 1
-  for model_key, model_feature in model_features.iteritems():
-    print("\rModel", model_count, "of", len(model_features),)
+  for model_id, model in models.iteritems():
+    print("\rModel", model_count, "of", len(models), end='')
     sys.stdout.flush()
     model_count += 1
     for probe_key, probe_feature in probe_features.iteritems():
-      # compute score using the desired Gabor jet similarity function
-      score = graph_machine.similarity(model_feature, probe_feature, SIMILARITY_FUNCTION)
+      # compute local scores for each model gabor jet and each probe jet
+      scores = numpy.ndarray((len(model), probe_feature.shape[0]), dtype = numpy.float)
+      for model_feature_index in range(len(model)):
+        for gabor_jet_index in range(probe_feature.shape[0]):
+          scores[model_feature_index, gabor_jet_index] = SIMILARITY_FUNCTION(model[model_feature_index][gabor_jet_index], probe_feature[gabor_jet_index])
+
+      # the final score is computed as the average over all positions, taking the most similar model jet
+      score = numpy.average(numpy.max(scores, axis = 0))
+#      score = graph_machine.similarity(model_feature, probe_feature, SIMILARITY_FUNCTION)
 
       # check if this is a positive score
-      if atnt_db.get_client_id_from_file_id(model_key) == atnt_db.get_client_id_from_file_id(probe_key):
+      if model_id == atnt_db.get_client_id_from_file_id(probe_key):
         positive_scores.append(score)
       else:
         negative_scores.append(score)

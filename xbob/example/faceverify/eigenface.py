@@ -63,14 +63,8 @@ def train(training_images):
 
 def extract_feature(image, pca_machine):
   """Projects the given list of images to the PCA subspace and returns the results"""
-  # create projection result in the desired size
-  projected_feature = numpy.ndarray((KEPT_EIGENFACES,), dtype = numpy.float64)
-
-  # project the data after linearizing them
-  pca_machine(image.flatten(), projected_feature)
-
-  # return the projected data
-  return projected_feature
+  # project and return the data after linearizing them
+  return pca_machine(image.flatten())
 
 
 DISTANCE_FUNCTION = scipy.spatial.distance.euclidean
@@ -106,6 +100,16 @@ def main():
   model_features = {}
   for key, image in model_images.iteritems():
     model_features[key] = extract_feature(image, pca_machine)
+
+  # enroll models from 5 features by simply storing all features
+  model_ids = [client.id for client in atnt_db.clients(groups = 'dev')]
+  models = {model_id : [] for model_id in model_ids}
+  # iterate over model features
+  for key, image in model_features.iteritems():
+    model_id = atnt_db.get_client_id_from_file_id(key)
+    # "enroll" model by collecting all model features of this client
+    models[model_id].append(model_features[key])
+
   print("Extracting probes")
   probe_features = {}
   for key, image in probe_images.iteritems():
@@ -120,13 +124,15 @@ def main():
   print("Computing scores")
 
   # iterate through models and probes and compute scores
-  for model_key, model_feature in model_features.iteritems():
+  for model_id, model in models.iteritems():
     for probe_key, probe_feature in probe_features.iteritems():
-      # compute score as the negative Euclidean distance
-      score = - DISTANCE_FUNCTION(model_feature, probe_feature)
+      # compute scores for all model features
+      scores = [- DISTANCE_FUNCTION(model_feature, probe_feature) for model_feature in model]
+      # the final score is the minimum distance (i.e., the maximum negative distance)
+      score = numpy.sum(scores)
 
       # check if this is a positive score
-      if atnt_db.get_client_id_from_file_id(model_key) == atnt_db.get_client_id_from_file_id(probe_key):
+      if model_id == atnt_db.get_client_id_from_file_id(probe_key):
         positive_scores.append(score)
       else:
         negative_scores.append(score)
