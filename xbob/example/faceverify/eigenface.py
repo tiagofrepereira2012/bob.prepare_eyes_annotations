@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
 
 import bob
 import xbob.db.atnt
@@ -91,7 +92,7 @@ def main():
   # load all training images
   training_images = load_images(atnt_db, group = 'world', database_directory = image_directory)
 
-  print "Training PCA machine"
+  print("Training PCA machine")
   pca_machine = train(training_images)
 
   #####################################################################
@@ -101,11 +102,11 @@ def main():
   model_images = load_images(atnt_db, group = 'dev', purpose = 'enrol', database_directory = image_directory)
   probe_images = load_images(atnt_db, group = 'dev', purpose = 'probe', database_directory = image_directory)
 
-  print "Extracting models"
+  print("Extracting models")
   model_features = {}
   for key, image in model_images.iteritems():
     model_features[key] = extract_feature(image, pca_machine)
-  print "Extracting probes"
+  print("Extracting probes")
   probe_features = {}
   for key, image in probe_images.iteritems():
     probe_features[key] = extract_feature(image, pca_machine)
@@ -116,7 +117,7 @@ def main():
   positive_scores = []
   negative_scores = []
 
-  print "Computing scores"
+  print("Computing scores")
 
   # iterate through models and probes and compute scores
   for model_key, model_feature in model_features.iteritems():
@@ -130,7 +131,7 @@ def main():
       else:
         negative_scores.append(score)
 
-  print "Evaluation"
+  print("Evaluation")
   # convert list of scores to numpy arrays
   positives = numpy.array(positive_scores)
   negatives = numpy.array(negative_scores)
@@ -139,7 +140,7 @@ def main():
   threshold = bob.measure.eer_threshold(negatives, positives)
   FAR, FRR = bob.measure.farfrr(negatives, positives, threshold)
 
-  print "Result: FAR", FAR, "and FRR", FRR, "at threshold", threshold
+  print("Result: FAR", FAR, "and FRR", FRR, "at threshold", threshold)
 
   # plot ROC curve
   bob.measure.plot.roc(negatives, positives)
@@ -151,7 +152,7 @@ def main():
 
   # save plot to file
   pyplot.savefig("eigenface.png")
-  print "Saved figure 'eigenface.png'"
+  print("Saved figure 'eigenface.png'")
 
   # show ROC curve.
   # enable it if you like. This will open a window and display the ROC curve

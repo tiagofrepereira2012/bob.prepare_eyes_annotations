@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
 
 import bob
 import xbob.db.atnt
@@ -87,7 +88,7 @@ def main():
 
   # for Gabor graphs, no training is required.
 
-  print "Creating Gabor graph machine"
+  print("Creating Gabor graph machine")
   # create a machine that will produce tight Gabor graphs with inter-node distance (4,4)
   graph_machine = bob.machine.GaborGraphMachine((8,6), (104,86), (4,4))
 
@@ -97,11 +98,11 @@ def main():
   model_images = load_images(atnt_db, group = 'dev', purpose = 'enrol', database_directory = image_directory)
   probe_images = load_images(atnt_db, group = 'dev', purpose = 'probe', database_directory = image_directory)
 
-  print "Extracting models"
+  print("Extracting models")
   model_features = {}
   for key, image in model_images.iteritems():
     model_features[key] = extract_feature(image, graph_machine)
-  print "Extracting probes"
+  print("Extracting probes")
   probe_features = {}
   for key, image in probe_images.iteritems():
     probe_features[key] = extract_feature(image, graph_machine)
@@ -112,12 +113,12 @@ def main():
   positive_scores = []
   negative_scores = []
 
-  print "Computing scores"
+  print("Computing scores")
 
   # iterate through models and probes and compute scores
   model_count = 1
   for model_key, model_feature in model_features.iteritems():
-    print "\rModel", model_count, "of", len(model_features),
+    print("\rModel", model_count, "of", len(model_features),)
     sys.stdout.flush()
     model_count += 1
     for probe_key, probe_feature in probe_features.iteritems():
@@ -130,7 +131,7 @@ def main():
       else:
         negative_scores.append(score)
 
-  print "\nEvaluation"
+  print("\nEvaluation")
   # convert list of scores to numpy arrays
   positives = numpy.array(positive_scores)
   negatives = numpy.array(negative_scores)
@@ -139,7 +140,7 @@ def main():
   threshold = bob.measure.eer_threshold(negatives, positives)
   FAR, FRR = bob.measure.farfrr(negatives, positives, threshold)
 
-  print "Result: FAR", FAR, "and FRR", FRR, "at threshold", threshold
+  print("Result: FAR", FAR, "and FRR", FRR, "at threshold", threshold)
 
   # plot ROC curve
   bob.measure.plot.roc(negatives, positives)
@@ -151,7 +152,7 @@ def main():
 
   # save plot to file
   pyplot.savefig("gabor_graph.png")
-  print "Saved figure 'gabor_graph.png'"
+  print("Saved figure 'gabor_graph.png'")
 
   # show ROC curve.
   # enable it if you like. This will open a window and display the ROC curve

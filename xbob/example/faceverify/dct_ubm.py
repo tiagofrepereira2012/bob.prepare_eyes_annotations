@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
 
 import bob
 import xbob.db.atnt
@@ -142,17 +143,17 @@ def main():
   # load all training images
   training_images = load_images(atnt_db, group = 'world', database_directory = image_directory)
 
-  print "Extracting training features"
+  print("Extracting training features")
   training_features = {}
   for key, image in training_images.iteritems():
     training_features[key] = extract_feature(image)
 
-  print "Training UBM model"
+  print("Training UBM model")
   ubm = train(training_features)
 
   #####################################################################
   ### GMM model enrollment
-  print "Enrolling GMM models"
+  print("Enrolling GMM models")
   gmm_trainer = bob.trainer.MAP_GMMTrainer()
   gmm_trainer.max_iterations = 1
   gmm_trainer.set_prior_gmm(ubm)
@@ -174,7 +175,7 @@ def main():
   #####################################################################
   ### probe stats
 
-  print "Computing probe statistics"
+  print("Computing probe statistics")
   probe_images = load_images(atnt_db, group = 'dev', purpose = 'probe', database_directory = image_directory)
   probes = {}
   for key, image in probe_images.iteritems():
@@ -188,7 +189,7 @@ def main():
   positive_scores = []
   negative_scores = []
 
-  print "Computing scores"
+  print("Computing scores")
   distance_function = bob.machine.linear_scoring
 
   # iterate through models and probes and compute scores
@@ -203,7 +204,7 @@ def main():
       else:
         negative_scores.append(score)
 
-  print "Evaluation"
+  print("Evaluation")
   # convert list of scores to numpy arrays
   positives = numpy.array(positive_scores)
   negatives = numpy.array(negative_scores)
@@ -212,7 +213,7 @@ def main():
   threshold = bob.measure.eer_threshold(negatives, positives)
   FAR, FRR = bob.measure.farfrr(negatives, positives, threshold)
 
-  print "Result: FAR", FAR, "and FRR", FRR, "at threshold", threshold
+  print("Result: FAR", FAR, "and FRR", FRR, "at threshold", threshold)
 
   # plot ROC curve
   bob.measure.plot.roc(negatives, positives)
@@ -224,7 +225,7 @@ def main():
 
   # save plot to file
   pyplot.savefig("dct_ubm.png")
-  print "Saved figure 'dct_ubm.png'"
+  print("Saved figure 'dct_ubm.png'")
 
   # show ROC curve.
   # enable it if you like. This will open a window and display the ROC curve
