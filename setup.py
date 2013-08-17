@@ -79,4 +79,13 @@ setup(
         ],
      },
 
+    classifiers = [
+      'Development Status :: 5 - Production/Stable',
+      'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+      'Intended Audience :: Education',
+      'Intended Audience :: Science/Research',
+      'Natural Language :: English',
+      'Programming Language :: Python',
+      'Programming Language :: Python :: 3',
+      ],
 )
