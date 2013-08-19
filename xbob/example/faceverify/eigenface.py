@@ -103,7 +103,7 @@ def main():
 
   # enroll models from 5 features by simply storing all features
   model_ids = [client.id for client in atnt_db.clients(groups = 'dev')]
-  models = {model_id : [] for model_id in model_ids}
+  models = dict((model_id, []) for model_id in model_ids) # note: py26 compat.
   # iterate over model features
   for key, image in model_features.iteritems():
     model_id = atnt_db.get_client_id_from_file_id(key)
