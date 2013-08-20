@@ -23,6 +23,8 @@ import bob
 import xbob.db.atnt
 import os, sys
 import numpy, scipy.spatial
+import matplotlib
+matplotlib.use('pdf')
 from matplotlib import pyplot
 
 from .utils import atnt_database_directory
