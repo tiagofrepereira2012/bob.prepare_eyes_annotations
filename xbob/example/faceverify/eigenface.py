@@ -159,8 +159,8 @@ def main():
   pyplot.axis([0, 100, 0, 100]) #xmin, xmax, ymin, ymax
 
   # save plot to file
-  pyplot.savefig("eigenface.png")
-  print("Saved figure 'eigenface.png'")
+  pyplot.savefig("eigenface.pdf")
+  print("Saved figure 'eigenface.pdf'")
 
   # show ROC curve.
   # enable it if you like. This will open a window and display the ROC curve
