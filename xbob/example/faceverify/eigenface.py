@@ -25,6 +25,10 @@ import os, sys
 import numpy, scipy.spatial
 import matplotlib
 matplotlib.use('pdf')
+# enable LaTeX interpreter
+matplotlib.rc('text', usetex=True)
+matplotlib.rc('font', family='serif')
+matplotlib.rc('lines', linewidth = 4)
 from matplotlib import pyplot
 
 from .utils import atnt_database_directory
@@ -152,9 +156,9 @@ def main():
 
   # plot ROC curve
   bob.measure.plot.roc(negatives, positives)
-  pyplot.xlabel("False Rejection Rate (%)")
-  pyplot.ylabel("False Acceptance Rate (%)")
-  pyplot.title("ROC Curve for Eigenface based AT&T Verification Experiment")
+  pyplot.xlabel("False Rejection Rate (\%)")
+  pyplot.ylabel("False Acceptance Rate (\%)")
+  pyplot.title("ROC Curve for Eigenface based AT\&T Verification Experiment")
   pyplot.grid()
   pyplot.axis([0, 100, 0, 100]) #xmin, xmax, ymin, ymax
 

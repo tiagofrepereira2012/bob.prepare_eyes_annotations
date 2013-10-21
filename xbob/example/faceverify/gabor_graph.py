@@ -25,6 +25,10 @@ import os, sys
 import numpy, math
 import matplotlib
 matplotlib.use('pdf')
+# enable LaTeX interpreter
+matplotlib.rc('text', usetex=True)
+matplotlib.rc('font', family='serif')
+matplotlib.rc('lines', linewidth = 4)
 from matplotlib import pyplot
 
 from .utils import atnt_database_directory
@@ -66,7 +70,7 @@ def extract_feature(image, graph_machine):
 
 
 # define a certain Gabor jet similarity function that should be used
-SIMILARITY_FUNCTION = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.CANBERRA, gabor_wavelet_transform)
+SIMILARITY_FUNCTION = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.PHASE_DIFF_PLUS_CANBERRA, gabor_wavelet_transform)
 
 def main():
   """This function will perform Gabor graph comparison test on the AT&T database."""
@@ -136,7 +140,6 @@ def main():
 
       # the final score is computed as the average over all positions, taking the most similar model jet
       score = numpy.average(numpy.max(scores, axis = 0))
-#      score = graph_machine.similarity(model_feature, probe_feature, SIMILARITY_FUNCTION)
 
       # check if this is a positive score
       if model_id == atnt_db.get_client_id_from_file_id(probe_key):
@@ -157,15 +160,15 @@ def main():
 
   # plot ROC curve
   bob.measure.plot.roc(negatives, positives)
-  pyplot.xlabel("False Rejection Rate (%)")
-  pyplot.ylabel("False Acceptance Rate (%)")
-  pyplot.title("ROC Curve for Gabor phase based AT&T Verification Experiment")
+  pyplot.xlabel("False Rejection Rate (\%)")
+  pyplot.ylabel("False Acceptance Rate (\%)")
+  pyplot.title("ROC Curve for Gabor phase based AT\&T Verification Experiment")
   pyplot.grid()
   pyplot.axis([0, 100, 0, 100]) #xmin, xmax, ymin, ymax
 
   # save plot to file
-  pyplot.savefig("gabor_graph.png")
-  print("Saved figure 'gabor_graph.png'")
+  pyplot.savefig("gabor_graph.pdf")
+  print("Saved figure 'gabor_graph.pdf'")
 
   # show ROC curve.
   # enable it if you like. This will open a window and display the ROC curve

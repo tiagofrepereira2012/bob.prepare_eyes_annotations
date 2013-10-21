@@ -143,7 +143,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
 
     # compute score
     score = graph_machine.similarity(model, probe, SIMILARITY_FUNCTION)
-    self.assertAlmostEqual(score, 0.66058309)
+    self.assertAlmostEqual(score, 0.414937662799)
 
 
   def test03_dct_ubm(self):

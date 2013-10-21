@@ -25,6 +25,10 @@ import os, sys
 import numpy
 import matplotlib
 matplotlib.use('pdf')
+# enable LaTeX interpreter
+matplotlib.rc('text', usetex=True)
+matplotlib.rc('font', family='serif')
+matplotlib.rc('lines', linewidth = 4)
 from matplotlib import pyplot
 
 from .utils import atnt_database_directory
@@ -219,15 +223,15 @@ def main():
 
   # plot ROC curve
   bob.measure.plot.roc(negatives, positives)
-  pyplot.xlabel("False Rejection Rate (%)")
-  pyplot.ylabel("False Acceptance Rate (%)")
-  pyplot.title("ROC Curve for UBM/GMM based AT&T Verification Experiment")
+  pyplot.xlabel("False Rejection Rate (\%)")
+  pyplot.ylabel("False Acceptance Rate (\%)")
+  pyplot.title("ROC Curve for UBM/GMM based AT\&T Verification Experiment")
   pyplot.grid()
   pyplot.axis([0, 100, 0, 100]) #xmin, xmax, ymin, ymax
 
   # save plot to file
-  pyplot.savefig("dct_ubm.png")
-  print("Saved figure 'dct_ubm.png'")
+  pyplot.savefig("dct_ubm.pdf")
+  print("Saved figure 'dct_ubm.pdf'")
 
   # show ROC curve.
   # enable it if you like. This will open a window and display the ROC curve

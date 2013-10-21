@@ -87,7 +87,7 @@ To follow the evaluation protocol, we *enroll* a client model for each client, s
 .. code-block:: python
 
   >>> model_ids = [client.id for client in atnt_db.clients(groups = 'dev')]
-  for model_feature_id in model_features:
+  >>> for model_feature_id in model_features:
   ...   model_id = atnt_db.get_client_id_from_file_id(model_feature_id)
   ...   models[model_id].append(model_features[model_feature_id])
 
@@ -111,7 +111,7 @@ Using these lists, the ROC curve is plotted:
   >>> bob.measure.plot.roc(negatives, positives)
 
 .. image:: eigenface.png
-  :scale: 70 %
+  :scale: 100 %
 
 and the performance is computed:
 
@@ -120,7 +120,7 @@ and the performance is computed:
   >>> threshold = bob.measure.eer_threshold(negatives, positives)
   >>> FAR, FRR = bob.measure.farfrr(negatives, positives, threshold)
 
-The expected result is: FAR 16.4% and FRR 16.4% at distance threshold -2048.9
+The expected result is: FAR 9.15% and FRR 9% at threshold -9276.2
 
 .. note::
 
@@ -166,29 +166,47 @@ Now, the Gabor graph features can be extracted from the model and probe images:
   ...   # ... some steps to create the Gabor jet image ...
   ...   graph_machine(jet_image, probe_feature)
 
-To compare the Gabor graphs, several methods can be applied.
-Here, we chose to compute the similarity of two graphs as the average of corresponding Gabor jet similarities.
-Again, many choices for the Gabor jet comparison exist, here we take Canberra similarity function [GHW12]_:
+For model enrollment, again we simply collect all enrollment features:
 
 .. code-block:: python
 
-  >>> for model_feature in model_features:
+  >>> model_ids = [client.id for client in atnt_db.clients(groups = 'dev')]
+  >>> for key, image in model_features.iteritems():
+  ...   model_id = atnt_db.get_client_id_from_file_id(key)
+  ...   models[model_id].append(model_features[key])
+
+To compare the Gabor graphs, several methods can be applied.
+Again, many choices for the Gabor jet comparison exist, here we take a novel Gabor phase based similarity function [GHW12]_:
+
+.. code-block:: python
+
+  >>> SIMILARITY_FUNCTION = bob.machine.GaborJetSimilarity(bob.machine.gabor_jet_similarity_type.PHASE_DIFF_PLUS_CANBERRA, gabor_wavelet_transform)
+
+Since we have several local features, we can exploit this fact.
+For each local position, we compute the similarity between the probe feature at this position and all model features and take the maximum value:
+
+.. code-block:: python
+
+  >>> for model_id in model_ids:
   ...  for probe_feature in probe_features:
-  ...    score = graph_machine.similarity(model_feature, probe_feature, bob.machine.DisparityCorrectedPhaseDifference())
+  ...    for model_feature in models[model_id]:
+  ...      for node_index in range(probe_feature.shape[0]):
+  ...        scores[...] = SIMILARITY_FUNCTION(model_feature[node_index], probe_feature[node_index])
+  ...    score = numpy.average(numpy.max(scores, axis = 0))
 
 The evaluation is identical to the evaluation in the eigenface example.
 Since this method is better for suited for small image databases, the resulting verification rates are better.
 The expected ROC curve is:
 
 .. image:: gabor_graph.png
-  :scale: 70 %
+  :scale: 100 %
 
-while the expected verification result is: FAR 13.1% and FRR 13.2% at distance threshold 0.6894
+while the expected verification result is: FAR 3% and FRR 3% at distance threshold 0.5912
 
 
 The UBM/GMM modeling of DCT Blocks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The last example shows a quite complicated, but very successful algorithm.
+The last example shows a quite complicated, but successful algorithm.
 The first step is the feature extraction of the training image features and the collection of them in a 2D array.
 In this experiment we will use *Discrete Cosine Transform* (DCT) block features [MM09]_:
 
@@ -286,15 +304,9 @@ Again, the evaluation of the scores is identical to the previous examples.
 The expected ROC curve is:
 
 .. image:: dct_ubm.png
-  :scale: 70 %
+  :scale: 100 %
 
-The expected result is: FAR 5% and FRR 5% at distance threshold 7640.9
-
-.. note::
-
-  The resulting ROC curve is not directly comparable to the ones from the other experiments.
-  This is due to the fact that here the model files are merged into **one** GMM model **per identity**, whereas before each model file (**five per identity**) generated its own scores.
-  Nonetheless, the verification results of the UBM/GMM model are impressive.
+The expected result is: FAR 5% and FRR 5% at distance threshold 7640.95
 
 
 .. [TP91]   Matthew Turk and Alex Pentland. Eigenfaces for recognition. Journal of Cognitive Neuroscience, 3(1):71-86, 1991.
