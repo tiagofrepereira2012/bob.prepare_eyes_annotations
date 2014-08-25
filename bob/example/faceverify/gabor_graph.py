@@ -19,10 +19,16 @@
 
 from __future__ import print_function
 
-import bob
-import xbob.db.atnt
+# import required bob modules
+import bob.db.atnt
+import bob.io.base
+import bob.io.image
+import bob.ip.base
+import bob.ip.gabor
+import bob.measure
+
 import os, sys
-import numpy, scipy.spatial
+import numpy, math
 import matplotlib
 matplotlib.use('pdf')
 # enable LaTeX interpreter
@@ -34,6 +40,9 @@ from matplotlib import pyplot
 from .utils import atnt_database_directory
 
 
+# To preprocess the AT&T images, we use the TanTriggs algorithm
+preprocessor = bob.ip.base.TanTriggs()
+
 def load_images(db, group = None, purpose = None, database_directory = None, image_extension = '.pgm'):
   """Reads the images for the given group and the given purpose from the given database"""
   # get the file names from the database
@@ -42,44 +51,38 @@ def load_images(db, group = None, purpose = None, database_directory = None, ima
   images = {}
   for k in files:
     # load image and linearize it into a vector
-    images[k.id] = bob.io.load(k.make_path(database_directory, image_extension)).astype(numpy.float64)
+    images[k.id] = bob.io.base.load(k.make_path(database_directory, image_extension)).astype(numpy.float64)
+    # preprocess the images
+    images[k.id] = preprocessor(images[k.id])
   return images
 
 
-# The number of eigenfaces that should be kept
-KEPT_EIGENFACES = 5
+# define Gabor wavelet transform class globally since it is reused for all images
+gabor_wavelet_transform = bob.ip.gabor.Transform(k_max = 0.25 * math.pi)
+# pre-allocate Gabor wavelet transform image in the desired size
+trafo_image = numpy.ndarray((gabor_wavelet_transform.number_of_wavelets, 112, 92), numpy.complex128)
 
-def train(training_images):
-  """Trains the PCA module with the given list of training images"""
-  # perform training using a PCA trainer
-  pca_trainer = bob.trainer.PCATrainer()
+def extract_feature(image, graph):
+  """Extracts the Gabor graphs from the given image"""
 
-  # create array set used for training
-  # iterate through the training examples and linearize the images
-  training_set = numpy.vstack([image.flatten() for image in training_images.values()])
+  # perform Gabor wavelet transform on the image
+  gabor_wavelet_transform.transform(image, trafo_image)
 
-  # training the PCA returns a machine that can be used for projection
-  pca_machine, eigen_values = pca_trainer.train(training_set)
+  # extract the Gabor graphs from the feature image
+  gabor_graph = graph.extract(trafo_image)
 
-  # limit the number of kept eigenfaces
-  pca_machine.resize(pca_machine.shape[0], KEPT_EIGENFACES)
-
-  return pca_machine
+  # return the extracted graph
+  return gabor_graph
 
 
-def extract_feature(image, pca_machine):
-  """Projects the given list of images to the PCA subspace and returns the results"""
-  # project and return the data after linearizing them
-  return pca_machine(image.flatten())
-
-
-DISTANCE_FUNCTION = scipy.spatial.distance.euclidean
+# define a certain Gabor jet similarity function that should be used
+SIMILARITY_FUNCTION = bob.ip.gabor.Similarity('PhaseDiffPlusCanberra', gabor_wavelet_transform)
 
 def main():
-  """This function will perform an eigenface test on the AT&T database"""
+  """This function will perform Gabor graph comparison test on the AT&T database."""
 
   # use the bob.db interface to retrieve information about the Database
-  atnt_db = xbob.db.atnt.Database()
+  atnt_db = bob.db.atnt.Database()
 
   # Check the existence of the AT&T database and download it if not
   # Also check if the AT&T database directory is overwritten by the command line
@@ -89,23 +92,22 @@ def main():
   #####################################################################
   ### Training
 
-  # load all training images
-  training_images = load_images(atnt_db, group = 'world', database_directory = image_directory)
+  # for Gabor graphs, no training is required.
 
-  print("Training PCA machine")
-  pca_machine = train(training_images)
+  print("Creating Gabor graph machine")
+  # create a machine that will produce tight Gabor graphs with inter-node distance (4,4)
+  graph_machine = bob.ip.gabor.Graph(first=(8,6), last=(104,86), step=(4,4))
 
   #####################################################################
-  ### extract eigenface features of model and probe images
-
-  # load model and probe images
+  ### extract Gabor graph features for all model and probe images
+  # load all model and probe images
   model_images = load_images(atnt_db, group = 'dev', purpose = 'enrol', database_directory = image_directory)
   probe_images = load_images(atnt_db, group = 'dev', purpose = 'probe', database_directory = image_directory)
 
   print("Extracting models")
   model_features = {}
   for key, image in model_images.iteritems():
-    model_features[key] = extract_feature(image, pca_machine)
+    model_features[key] = extract_feature(image, graph_machine)
 
   # enroll models from 5 features by simply storing all features
   model_ids = [client.id for client in atnt_db.clients(groups = 'dev')]
@@ -119,7 +121,7 @@ def main():
   print("Extracting probes")
   probe_features = {}
   for key, image in probe_images.iteritems():
-    probe_features[key] = extract_feature(image, pca_machine)
+    probe_features[key] = extract_feature(image, graph_machine)
 
 
   #####################################################################
@@ -130,12 +132,20 @@ def main():
   print("Computing scores")
 
   # iterate through models and probes and compute scores
+  model_count = 1
   for model_id, model in models.iteritems():
+    print("\rModel", model_count, "of", len(models), end='')
+    sys.stdout.flush()
+    model_count += 1
     for probe_key, probe_feature in probe_features.iteritems():
-      # compute scores for all model features
-      scores = [- DISTANCE_FUNCTION(model_feature, probe_feature) for model_feature in model]
-      # the final score is the minimum distance (i.e., the maximum negative distance)
-      score = numpy.sum(scores)
+      # compute local scores for each model gabor jet and each probe jet
+      scores = numpy.ndarray((len(model), len(probe_feature)), dtype = numpy.float)
+      for model_feature_index in range(len(model)):
+        for gabor_jet_index in range(len(probe_feature)):
+          scores[model_feature_index, gabor_jet_index] = SIMILARITY_FUNCTION(model[model_feature_index][gabor_jet_index], probe_feature[gabor_jet_index])
+
+      # the final score is computed as the average over all positions, taking the most similar model jet
+      score = numpy.average(numpy.max(scores, axis = 0))
 
       # check if this is a positive score
       if model_id == atnt_db.get_client_id_from_file_id(probe_key):
@@ -143,7 +153,7 @@ def main():
       else:
         negative_scores.append(score)
 
-  print("Evaluation")
+  print("\nEvaluation")
   # convert list of scores to numpy arrays
   positives = numpy.array(positive_scores)
   negatives = numpy.array(negative_scores)
@@ -158,13 +168,13 @@ def main():
   bob.measure.plot.roc(negatives, positives)
   pyplot.xlabel("False Rejection Rate (\%)")
   pyplot.ylabel("False Acceptance Rate (\%)")
-  pyplot.title("ROC Curve for Eigenface based AT\&T Verification Experiment")
+  pyplot.title("ROC Curve for Gabor phase based AT\&T Verification Experiment")
   pyplot.grid()
   pyplot.axis([0, 100, 0, 100]) #xmin, xmax, ymin, ymax
 
   # save plot to file
-  pyplot.savefig("eigenface.pdf")
-  print("Saved figure 'eigenface.pdf'")
+  pyplot.savefig("gabor_graph.pdf")
+  print("Saved figure 'gabor_graph.pdf'")
 
   # show ROC curve.
   # enable it if you like. This will open a window and display the ROC curve

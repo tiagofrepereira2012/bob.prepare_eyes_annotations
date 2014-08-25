@@ -19,8 +19,14 @@
 
 from __future__ import print_function
 
-import bob
-import xbob.db.atnt
+# import required bob modules
+import bob.db.atnt
+import bob.io.base
+import bob.io.image
+import bob.ip.base
+import bob.learn.misc
+import bob.measure
+
 import os, sys
 import numpy
 import matplotlib
@@ -51,7 +57,7 @@ def load_images(db, group = None, purpose = None, client_id = None, database_dir
   images = {}
   for k in files:
     # load image and linearize it into a vector
-    images[k.id] = bob.io.load(k.make_path(database_directory, image_extension)).astype(numpy.float64)
+    images[k.id] = bob.io.base.load(k.make_path(database_directory, image_extension)).astype(numpy.float64)
   return images
 
 
@@ -61,7 +67,7 @@ DCT_BLOCK_OVERLAP = 11
 NUMBER_OF_DCT_COMPONENTS = 45
 
 # create a DCT block extractor model
-dct_extractor = bob.ip.DCTFeatures(DCT_BLOCK_SIZE, DCT_BLOCK_SIZE, DCT_BLOCK_OVERLAP, DCT_BLOCK_OVERLAP, NUMBER_OF_DCT_COMPONENTS)
+dct_extractor = bob.ip.base.DCTFeatures(NUMBER_OF_DCT_COMPONENTS, (DCT_BLOCK_SIZE, DCT_BLOCK_SIZE), (DCT_BLOCK_OVERLAP, DCT_BLOCK_OVERLAP))
 
 def extract_feature(image):
   """Extracts the DCT features for the given image"""
@@ -82,11 +88,11 @@ def train(training_features, number_of_gaussians = NUMBER_OF_GAUSSIANS):
 
   input_size = training_set.shape[1]
   # create the KMeans and UBM machine
-  kmeans = bob.machine.KMeansMachine(number_of_gaussians, input_size)
-  ubm = bob.machine.GMMMachine(number_of_gaussians, input_size)
+  kmeans = bob.learn.misc.KMeansMachine(number_of_gaussians, input_size)
+  ubm = bob.learn.misc.GMMMachine(number_of_gaussians, input_size)
 
   # create the KMeansTrainer
-  kmeans_trainer = bob.trainer.KMeansTrainer()
+  kmeans_trainer = bob.learn.misc.KMeansTrainer()
 
   # train using the KMeansTrainer
   kmeans_trainer.train(kmeans, training_set)
@@ -100,7 +106,7 @@ def train(training_features, number_of_gaussians = NUMBER_OF_GAUSSIANS):
   ubm.weights = weights
 
   # train the GMM
-  trainer = bob.trainer.ML_GMMTrainer()
+  trainer = bob.learn.misc.ML_GMMTrainer()
   trainer.train(ubm, training_set)
 
   return ubm
@@ -111,7 +117,7 @@ def enroll(model_features, ubm, gmm_trainer):
   # create array set used for enrolling
   enroll_set = numpy.vstack(model_features.values())
   # create a GMM from the UBM
-  gmm = bob.machine.GMMMachine(ubm)
+  gmm = bob.learn.misc.GMMMachine(ubm)
 
   # train the GMM
   gmm_trainer.train(gmm, enroll_set)
@@ -126,7 +132,7 @@ def stats(probe_feature, ubm):
   probe_feature = numpy.vstack([probe_feature])
 
   # Accumulate statistics
-  gmm_stats = bob.machine.GMMStats(ubm.dim_c, ubm.dim_d)
+  gmm_stats = bob.learn.misc.GMMStats(ubm.dim_c, ubm.dim_d)
   gmm_stats.init()
   ubm.acc_statistics(probe_feature, gmm_stats)
 
@@ -137,7 +143,7 @@ def main():
   """This function will perform an a DCT block extraction and a UBM/GMM modeling test on the AT&T database"""
 
   # use the bob.db interface to retrieve information about the Database
-  atnt_db = xbob.db.atnt.Database()
+  atnt_db = bob.db.atnt.Database()
 
   # Check the existence of the AT&T database and download it if not
   # Also check if the AT&T database directory is overwritten by the command line
@@ -160,7 +166,7 @@ def main():
   #####################################################################
   ### GMM model enrollment
   print("Enrolling GMM models")
-  gmm_trainer = bob.trainer.MAP_GMMTrainer()
+  gmm_trainer = bob.learn.misc.MAP_GMMTrainer()
   gmm_trainer.max_iterations = 1
   gmm_trainer.set_prior_gmm(ubm)
 
@@ -196,7 +202,7 @@ def main():
   negative_scores = []
 
   print("Computing scores")
-  distance_function = bob.machine.linear_scoring
+  distance_function = bob.learn.misc.linear_scoring
 
   # iterate through models and probes and compute scores
   for model_id, model_gmm in models.iteritems():

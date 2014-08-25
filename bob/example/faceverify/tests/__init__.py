@@ -24,13 +24,17 @@ import os, sys
 import unittest
 from nose.plugins.skip import SkipTest
 
-import bob
+import bob.io.base
+import bob.learn.linear
+import bob.ip.gabor
+import bob.learn.misc
+
 import numpy, numpy.linalg
 
-import xbob.db.atnt
+import bob.db.atnt
 
 import pkg_resources
-import xbob.example.faceverify
+import bob.example.faceverify
 
 
 regenerate_references = False
@@ -60,7 +64,8 @@ class FaceVerifyExampleTest(unittest.TestCase):
       shutil.rmtree(self.m_temp_dir)
 
   def resource(self, f):
-    return pkg_resources.resource_filename('xbob.example.faceverify.tests', f)
+    return pkg_resources.resource_filename('bob.example.faceverify.tests', f)
+
 
   def test00_database(self):
     # test that the database exists
@@ -70,15 +75,16 @@ class FaceVerifyExampleTest(unittest.TestCase):
     for d in subdirs:
       self.assertTrue(set(files).issubset(os.listdir(os.path.join(self.m_database_dir,d))))
 
+
   def test01_eigenface(self):
     # test the eigenface algorithm
     try:
-      from xbob.example.faceverify.eigenface import load_images, train, extract_feature, DISTANCE_FUNCTION
+      from bob.example.faceverify.eigenface import load_images, train, extract_feature, DISTANCE_FUNCTION
     except ImportError as e:
-      raise SkipTest("Skipping the tests since importing from faceverify.eigenface raised exception '%s'"%e)
+      raise SkipTest("Skipping the tests since importing from bob.example.faceverify.eigenface raised exception '%s'"%e)
 
     # open database
-    atnt_db = xbob.db.atnt.Database()
+    atnt_db = bob.db.atnt.Database()
     # test if all training images are loaded
     images = load_images(atnt_db, group = 'world', database_directory = self.m_database_dir)
     self.assertEqual(len(images), 200)
@@ -86,10 +92,10 @@ class FaceVerifyExampleTest(unittest.TestCase):
     # test that the training works (for speed reasons, we limit the number of training files)
     pca = train(images)
     if regenerate_references:
-      pca.save(bob.io.HDF5File(self.resource('pca_projector.hdf5'), 'w'))
+      pca.save(bob.io.base.HDF5File(self.resource('pca_projector.hdf5'), 'w'))
 
     # load PCA reference and check that it is still similar
-    pca_ref = bob.machine.LinearMachine(bob.io.HDF5File(self.resource('pca_projector.hdf5')))
+    pca_ref = bob.learn.linear.Machine(bob.io.base.HDF5File(self.resource('pca_projector.hdf5')))
     self.assertTrue(pca_ref.is_similar_to(pca))
 
     # check the the projection is the same
@@ -97,12 +103,12 @@ class FaceVerifyExampleTest(unittest.TestCase):
     probe = extract_feature(images[2], pca)
 
     if regenerate_references:
-      bob.io.save(model, self.resource('pca_model.hdf5'))
-      bob.io.save(probe, self.resource('pca_probe.hdf5'))
+      bob.io.base.save(model, self.resource('pca_model.hdf5'))
+      bob.io.base.save(probe, self.resource('pca_probe.hdf5'))
 
     # load model and probe reference
-    model_ref = bob.io.load(self.resource('pca_model.hdf5'))
-    probe_ref = bob.io.load(self.resource('pca_probe.hdf5'))
+    model_ref = bob.io.base.load(self.resource('pca_model.hdf5'))
+    probe_ref = bob.io.base.load(self.resource('pca_probe.hdf5'))
     self.assertTrue(numpy.allclose(model_ref, model))
     self.assertTrue(numpy.allclose(probe_ref, probe))
 
@@ -114,47 +120,48 @@ class FaceVerifyExampleTest(unittest.TestCase):
   def test02_gabor_graph(self):
     # test the gabor phase algorithm
     try:
-      from xbob.example.faceverify.gabor_graph import load_images, extract_feature, SIMILARITY_FUNCTION
+      from bob.example.faceverify.gabor_graph import load_images, extract_feature, SIMILARITY_FUNCTION
     except ImportError as e:
-      raise SkipTest("Skipping the tests since importing from faceverify.gabor_phase raised exception '%s'"%e)
+      raise SkipTest("Skipping the tests since importing from bob.example.faceverify.gabor_graph raised exception '%s'"%e)
 
     # open database
-    atnt_db = xbob.db.atnt.Database()
+    atnt_db = bob.db.atnt.Database()
     # test if all training images are loaded
     images = load_images(atnt_db, group = 'world', database_directory = self.m_database_dir)
     self.assertEqual(len(images), 200)
 
     # extract features; for test purposes we wil use smaller features with inter-node-distance 8
-    graph_machine = bob.machine.GaborGraphMachine((0,0), (111,91), (8,8))
+    graph_machine = bob.ip.gabor.Graph((0,0), (111,91), (8,8))
 
     # check the the projection is the same
     model = extract_feature(images[1], graph_machine)
     probe = extract_feature(images[2], graph_machine)
 
     if regenerate_references:
-      bob.io.save(model, self.resource('gabor_model.hdf5'))
-      bob.io.save(probe, self.resource('gabor_probe.hdf5'))
+      bob.ip.gabor.save_jets(model, bob.io.base.HDF5File(self.resource('gabor_model.hdf5'), 'w'))
+      bob.ip.gabor.save_jets(probe, bob.io.base.HDF5File(self.resource('gabor_probe.hdf5'), 'w'))
 
     # load model and probe reference
-    model_ref = bob.io.load(self.resource('gabor_model.hdf5'))
-    probe_ref = bob.io.load(self.resource('gabor_probe.hdf5'))
-    self.assertTrue(numpy.allclose(model_ref, model))
-    self.assertTrue(numpy.allclose(probe_ref, probe))
+    model_ref = bob.ip.gabor.load_jets(bob.io.base.HDF5File(self.resource('gabor_model.hdf5')))
+    probe_ref = bob.ip.gabor.load_jets(bob.io.base.HDF5File(self.resource('gabor_probe.hdf5')))
+    for i in range(len(model_ref)):
+      self.assertTrue(numpy.allclose(model_ref[i].jet, model[i].jet))
+      self.assertTrue(numpy.allclose(probe_ref[i].jet, probe[i].jet))
 
     # compute score
-    score = graph_machine.similarity(model, probe, SIMILARITY_FUNCTION)
+    score = numpy.mean([SIMILARITY_FUNCTION.similarity(model[i], probe[i]) for i in range(len(model))])
     self.assertAlmostEqual(score, 0.414937662799)
 
 
   def test03_dct_ubm(self):
     # test the UBM/GMM algorithm
     try:
-      from xbob.example.faceverify.dct_ubm import load_images, extract_feature, train, enroll, stats, NUMBER_OF_GAUSSIANS
+      from bob.example.faceverify.dct_ubm import load_images, extract_feature, train, enroll, stats, NUMBER_OF_GAUSSIANS
     except ImportError as e:
-      raise SkipTest("Skipping the tests since importing from faceverify.dct_ubm raised exception '%s'"%e)
+      raise SkipTest("Skipping the tests since importing from bob.example.faceverify.dct_ubm raised exception '%s'"%e)
 
     # open database
-    atnt_db = xbob.db.atnt.Database()
+    atnt_db = bob.db.atnt.Database()
     # test if all training images are loaded
     images = load_images(atnt_db, group = 'world', database_directory = self.m_database_dir)
     keys = sorted(images.keys())
@@ -163,9 +170,9 @@ class FaceVerifyExampleTest(unittest.TestCase):
     # test that the original DCT extraction works
     dct_feature = extract_feature(images[1])
     if regenerate_references:
-      bob.io.save(dct_feature, self.resource('dct_feature.hdf5'))
+      bob.io.base.save(dct_feature, self.resource('dct_feature.hdf5'))
 
-    feature_ref = bob.io.load(self.resource('dct_feature.hdf5'))
+    feature_ref = bob.io.base.load(self.resource('dct_feature.hdf5'))
     self.assertTrue(numpy.allclose(feature_ref, dct_feature))
 
     # extract features for several images
@@ -180,15 +187,15 @@ class FaceVerifyExampleTest(unittest.TestCase):
     for i in keys[:10]: trainset[i] = features[i]
     ubm = train(trainset, number_of_gaussians = 2)
     if regenerate_references:
-      ubm.save(bob.io.HDF5File(self.resource('dct_ubm.hdf5'), 'w'))
+      ubm.save(bob.io.base.HDF5File(self.resource('dct_ubm.hdf5'), 'w'))
 
     # load PCA reference and check that it is still similar
-    ubm_ref = bob.machine.GMMMachine(bob.io.HDF5File(self.resource('dct_ubm.hdf5')))
+    ubm_ref = bob.learn.misc.GMMMachine(bob.io.base.HDF5File(self.resource('dct_ubm.hdf5')))
     self.assertTrue(ubm_ref.is_similar_to(ubm))
 
 
     # enroll a model with two features
-    enroller = bob.trainer.MAP_GMMTrainer()
+    enroller = bob.learn.misc.MAP_GMMTrainer()
     enroller.max_iterations = 1
     enroller.set_prior_gmm(ubm)
 #    model = enroll({i : features[i] for i in keys[10:12]}, ubm, enroller)
@@ -196,20 +203,20 @@ class FaceVerifyExampleTest(unittest.TestCase):
     for i in keys[10:12]: enrollset[i] = features[i]
     model = enroll(enrollset, ubm, enroller)
     if regenerate_references:
-      model.save(bob.io.HDF5File(self.resource('dct_model.hdf5'), 'w'))
+      model.save(bob.io.base.HDF5File(self.resource('dct_model.hdf5'), 'w'))
 
-    model_ref = bob.machine.GMMMachine(bob.io.HDF5File(self.resource('dct_model.hdf5')))
+    model_ref = bob.learn.misc.GMMMachine(bob.io.base.HDF5File(self.resource('dct_model.hdf5')))
     self.assertTrue(model_ref.is_similar_to(model))
 
     # compute probe statistics
     probe = stats(features[keys[12]], ubm)
     if regenerate_references:
-      probe.save(bob.io.HDF5File(self.resource('dct_probe.hdf5'), 'w'))
+      probe.save(bob.io.base.HDF5File(self.resource('dct_probe.hdf5'), 'w'))
 
-    probe_ref = bob.machine.GMMStats(bob.io.HDF5File(self.resource('dct_probe.hdf5')))
+    probe_ref = bob.learn.misc.GMMStats(bob.io.base.HDF5File(self.resource('dct_probe.hdf5')))
     self.assertTrue(probe_ref.is_similar_to(probe))
 
     # compute score
-    score = bob.machine.linear_scoring([model], ubm, [probe])[0,0]
+    score = bob.learn.misc.linear_scoring([model], ubm, [probe])[0,0]
     self.assertAlmostEqual(score, 6975.2165874138391)
 

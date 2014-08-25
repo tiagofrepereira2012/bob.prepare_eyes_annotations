@@ -7,7 +7,7 @@
 .mr.developer.cfg
 eggs/
 develop-eggs/
-xbob.example.faceverify.egg-info/
+bob.example.faceverify.egg-info/
 src/
 bin/
 dist/
