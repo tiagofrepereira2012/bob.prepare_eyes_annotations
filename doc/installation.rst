@@ -9,15 +9,15 @@
 
   .. code-block:: sh
 
-    $ wget https://pypi.python.org/packages/source/b/xbob.example.faceverify/xbob.example.faceverify-<version>.zip
-    $ unzip xbob.example.faceverify-<version>.zip
-    $ cd xbob.example.faceverify-<version>
+    $ wget https://pypi.python.org/packages/source/b/bob.example.faceverify/bob.example.faceverify-<version>.zip
+    $ unzip bob.example.faceverify-<version>.zip
+    $ cd bob.example.faceverify-<version>
 
-  where ``<version>`` is the latest version of the package that you can find under https://pypi.python.org/pypi/xbob.example.faceverify, or by cloning our git repository
+  where ``<version>`` is the latest version of the package that you can find under https://pypi.python.org/pypi/bob.example.faceverify, or by cloning our git repository
 
   .. code-block:: sh
 
-    $ git clone https://github.com/bioidiap/xbob.example.faceverify.git
+    $ git clone https://github.com/bioidiap/bob.example.faceverify.git
     $ cd bob.example.faceverify
 
 Installation of this example uses the `buildout <http://www.buildout.org/>`_ build environment.

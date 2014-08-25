@@ -46,7 +46,7 @@ def load_images(db, group = None, purpose = None, database_directory = None, ima
   # iterate through the list of file names
   images = {}
   for k in files:
-    # load image and linearize it into a vector
+    # load image
     images[k.id] = bob.io.base.load(k.make_path(database_directory, image_extension)).astype(numpy.float64)
   return images
 
@@ -116,8 +116,8 @@ def main():
   model_ids = [client.id for client in atnt_db.clients(groups = 'dev')]
   models = dict((model_id, []) for model_id in model_ids) # note: py26 compat.
   # iterate over model features
-  for key, image in model_features.iteritems():
-    model_id = atnt_db.get_client_id_from_file_id(key)
+  for file_id, image in model_features.iteritems():
+    model_id = atnt_db.get_client_id_from_file_id(file_id)
     # "enroll" model by collecting all model features of this client
     models[model_id].append(model_features[key])
 

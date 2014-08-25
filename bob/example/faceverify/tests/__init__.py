@@ -54,8 +54,8 @@ class FaceVerifyExampleTest(unittest.TestCase):
       self.m_database_dir = '/idiap/group/biometric/databases/orl'
     else:
       import tempfile
-      self.m_temp_dir = tempfile.mkdtemp('xbob_atnt_db')
-      from xbob.example.faceverify.utils import atnt_database_directory
+      self.m_temp_dir = tempfile.mkdtemp('bob_atnt_db')
+      from bob.example.faceverify.utils import atnt_database_directory
       self.m_database_dir = atnt_database_directory(self.m_temp_dir)
 
   def tearDown(self):

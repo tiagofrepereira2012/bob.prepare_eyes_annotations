@@ -4,7 +4,7 @@ Face verification using Bob
 .. note::
   If you are reading this page through our GitHub portal and not through PyPI, note the development tip of the package may not be stable or become unstable in a matter of moments.
 
-  Go to http://pypi.python.org/pypi/xbob.example.faceverify to download the latest stable version of this package.
+  Go to http://pypi.python.org/pypi/bob.example.faceverify to download the latest stable version of this package.
 
 Overview
 --------
@@ -45,14 +45,14 @@ Download
 
 Finally, to download this package, you can extract the .zip file from the link below, or you open a shell in a directory of your choice and call::
 
-  $ wget https://pypi.python.org/packages/source/b/xbob.example.faceverify/xbob.example.faceverify-<version>.zip
-  $ unzip xbob.example.faceverify-<version>.zip
-  $ cd xbob.example.faceverify-<version>
+  $ wget https://pypi.python.org/packages/source/b/bob.example.faceverify/bob.example.faceverify-<version>.zip
+  $ unzip bob.example.faceverify-<version>.zip
+  $ cd bob.example.faceverify-<version>
 
 where <version> should be replaced with a (the current) version of this package, or you can clone our git repository::
 
-  $ git clone https://github.com/bioidiap/xbob.example.faceverify.git
-  $ cd xbob.example.faceverify
+  $ git clone https://github.com/bioidiap/bob.example.faceverify.git
+  $ cd bob.example.faceverify
 
 Afterwards, please call::
 
@@ -66,5 +66,5 @@ to generate the scripts that, amongst others, will run the face verification alg
 
 (or use any other browser of your choice).
 
-If you have questions to or problems with this package, please send a request to bob-devel@googlegroups.com, or file a bug under https://github.com/bioidiap/xbob.example.faceverify/issues.
+If you have questions to or problems with this package, please send a request to bob-devel@googlegroups.com, or file a bug under https://github.com/bioidiap/bob.example.faceverify/issues.
 
