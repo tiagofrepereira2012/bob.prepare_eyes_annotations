@@ -119,7 +119,7 @@ def main():
   for file_id, image in model_features.items():
     model_id = atnt_db.get_client_id_from_file_id(file_id)
     # "enroll" model by collecting all model features of this client
-    models[model_id].append(model_features[key])
+    models[model_id].append(model_features[file_id])
 
   print("Extracting probes")
   probe_features = {}
@@ -139,7 +139,8 @@ def main():
     for probe_key, probe_feature in probe_features.items():
       # compute scores for all model features
       scores = [- DISTANCE_FUNCTION(model_feature, probe_feature) for model_feature in model]
-      # the final score is the minimum distance (i.e., the maximum negative distance)
+      # the final score is the average distance
+      # :: Note for the testers :: Try out other strategies!
       score = numpy.sum(scores)
 
       # check if this is a positive score
