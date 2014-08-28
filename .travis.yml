@@ -2,16 +2,20 @@ language: python
 matrix:
   include:
   - python: 2.6
+    - SCIPYSPEC===0.12.0
   - python: 2.7
     env:
+    - SCIPYSPEC===0.12.0
     - secure: gBLc7oAwSQZtxHf/olpoPS1dmlA9nTcaFBBSTi62BPth8d8BlPrLoGluWuEIyyjbWgoVLbzNHLG0KL1zsjoV8ZWMIed7WSLZBGu+wU8K2gvgpTKwsFb0OEAix5bE2/QrMZtdPDM+izOMPlFGTT2xF2NFd3gn3N9dJxntTq/hcZA=
     - secure: aMJ2P2EwYHrsweAFa8X9cm2nrBFFDGoRBH98cXAbOfkgrbHseoIEZN9nx/ItYteGZqv8DOi0lMlucSxU5OhvdLN+YoGn67TIb7kHtux8V2XfO57P5d/fFkJjqBVbBzXolqHvIXVkDEdriaDvFrvIospPiaPgaL8JdqcHA5k7lRQ=
   - python: 3.2
     env:
     - NUMPYSPEC===1.8.0
+    - SCIPYSPEC===0.13.1
   - python: 3.3
     env:
     - NUMPYSPEC===1.8.0
+    - SCIPYSPEC===0.13.1
 before_install:
 - sudo add-apt-repository -y ppa:biometrics/bob
 - sudo apt-get update -qq
@@ -20,7 +24,8 @@ before_install:
 - sudo apt-get install -qq --force-yes libatlas-dev libatlas-base-dev liblapack-dev
 - if [ -n "${NUMPYSPEC}" ]; then sudo apt-get install -qq gfortran; fi
 - if [ -n "${NUMPYSPEC}" ]; then pip install --upgrade pip setuptools; fi
-- if [ -n "${NUMPYSPEC}" ]; then pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel numpy$NUMPYSPEC sphinx nose matplotlib; fi
+- if [ -n "${NUMPYSPEC}" ]; then pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel numpy$NUMPYSPEC; fi
+- pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel scipy$SCIPYSPEC matplotlib==1.3.0 sphinx nose==1.3.0
 - pip install cpp-coveralls
 install:
 - python bootstrap.py
