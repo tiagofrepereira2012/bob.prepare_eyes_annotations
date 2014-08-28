@@ -41,14 +41,19 @@ def atnt_database_directory(atnt_user_directory = None):
     os.mkdir(atnt_default_directory)
 
   # setup
-  import urllib2, tempfile
+  import sys, tempfile
+  if sys.version_info[0] <= 2:
+    import urllib2 as urllib
+  else:
+    import urllib.request as urllib
+
   db_url = 'http://www.cl.cam.ac.uk/Research/DTG/attarchive/pub/data/att_faces.zip'
   import logging
   logger = logging.getLogger('bob')
   logger.warn("Downloading the AT&T database from '%s' to '%s' ..." % (db_url, atnt_default_directory))
 
   # download
-  url = urllib2.urlopen(db_url)
+  url = urllib.urlopen(db_url)
   local_zip_file = tempfile.mkstemp(prefix='atnt_db_', suffix='.zip')[1]
   dfile = open(local_zip_file, 'w')
   dfile.write(url.read())
