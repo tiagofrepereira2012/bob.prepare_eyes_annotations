@@ -21,7 +21,7 @@ import os
 
 def atnt_database_directory(atnt_user_directory = None):
   """Checks, where the AT&T database is located and downloads it on need."""
-  if atnt_user_directory:
+  if atnt_user_directory is not None:
     # a user directory is specified
     atnt_default_directory = atnt_user_directory
   elif 'ATNT_DATABASE_DIRECTORY' in os.environ:
@@ -55,7 +55,7 @@ def atnt_database_directory(atnt_user_directory = None):
   # download
   url = urllib.urlopen(db_url)
   local_zip_file = tempfile.mkstemp(prefix='atnt_db_', suffix='.zip')[1]
-  dfile = open(local_zip_file, 'w')
+  dfile = open(local_zip_file, 'wb')
   dfile.write(url.read())
   dfile.close()
 

@@ -54,7 +54,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
       self.m_database_dir = '/idiap/group/biometric/databases/orl'
     else:
       import tempfile
-      self.m_temp_dir = tempfile.mkdtemp('bob_atnt_db')
+      self.m_temp_dir = tempfile.mkdtemp(prefix='bob_atnt_db_')
       from bob.example.faceverify.utils import atnt_database_directory
       self.m_database_dir = atnt_database_directory(self.m_temp_dir)
 
