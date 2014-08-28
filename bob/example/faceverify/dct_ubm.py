@@ -157,7 +157,7 @@ def main():
 
   print("Extracting training features")
   training_features = {}
-  for key, image in training_images.iteritems():
+  for key, image in training_images.items():
     training_features[key] = extract_feature(image)
 
   print("Training UBM model")
@@ -178,7 +178,7 @@ def main():
     model_images = load_images(atnt_db, group = 'dev', purpose = 'enrol', client_id = model_id, database_directory = image_directory)
     models_for_current_id = {}
     # extract model features
-    for key, image in model_images.iteritems():
+    for key, image in model_images.items():
       models_for_current_id[key] = extract_feature(image)
     # enroll model for the current identity from these features
     model = enroll(models_for_current_id, ubm, gmm_trainer)
@@ -190,7 +190,7 @@ def main():
   print("Computing probe statistics")
   probe_images = load_images(atnt_db, group = 'dev', purpose = 'probe', database_directory = image_directory)
   probes = {}
-  for key, image in probe_images.iteritems():
+  for key, image in probe_images.items():
     # extract probe features
     probe_feature = extract_feature(image)
     # compute GMM statistics
@@ -205,8 +205,8 @@ def main():
   distance_function = bob.learn.misc.linear_scoring
 
   # iterate through models and probes and compute scores
-  for model_id, model_gmm in models.iteritems():
-    for probe_key, probe_stats in probes.iteritems():
+  for model_id, model_gmm in models.items():
+    for probe_key, probe_stats in probes.items():
       # compute score
       score = distance_function([model_gmm], ubm, [probe_stats])[0,0]
 

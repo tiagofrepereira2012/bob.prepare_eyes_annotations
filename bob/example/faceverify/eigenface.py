@@ -109,21 +109,21 @@ def main():
 
   print("Extracting models")
   model_features = {}
-  for key, image in model_images.iteritems():
+  for key, image in model_images.items():
     model_features[key] = extract_feature(image, pca_machine)
 
   # enroll models from 5 features by simply storing all features
   model_ids = [client.id for client in atnt_db.clients(groups = 'dev')]
   models = dict((model_id, []) for model_id in model_ids) # note: py26 compat.
   # iterate over model features
-  for file_id, image in model_features.iteritems():
+  for file_id, image in model_features.items():
     model_id = atnt_db.get_client_id_from_file_id(file_id)
     # "enroll" model by collecting all model features of this client
     models[model_id].append(model_features[key])
 
   print("Extracting probes")
   probe_features = {}
-  for key, image in probe_images.iteritems():
+  for key, image in probe_images.items():
     probe_features[key] = extract_feature(image, pca_machine)
 
 
@@ -135,8 +135,8 @@ def main():
   print("Computing scores")
 
   # iterate through models and probes and compute scores
-  for model_id, model in models.iteritems():
-    for probe_key, probe_feature in probe_features.iteritems():
+  for model_id, model in models.items():
+    for probe_key, probe_feature in probe_features.items():
       # compute scores for all model features
       scores = [- DISTANCE_FUNCTION(model_feature, probe_feature) for model_feature in model]
       # the final score is the minimum distance (i.e., the maximum negative distance)

@@ -106,21 +106,21 @@ def main():
 
   print("Extracting models")
   model_features = {}
-  for key, image in model_images.iteritems():
+  for key, image in model_images.items():
     model_features[key] = extract_feature(image, graph_machine)
 
   # enroll models from 5 features by simply storing all features
   model_ids = [client.id for client in atnt_db.clients(groups = 'dev')]
   models = dict((model_id, []) for model_id in model_ids) # note: py26 compat.
   # iterate over model features
-  for key, image in model_features.iteritems():
+  for key, image in model_features.items():
     model_id = atnt_db.get_client_id_from_file_id(key)
     # "enroll" model by collecting all model features of this client
     models[model_id].append(model_features[key])
 
   print("Extracting probes")
   probe_features = {}
-  for key, image in probe_images.iteritems():
+  for key, image in probe_images.items():
     probe_features[key] = extract_feature(image, graph_machine)
 
 
@@ -133,11 +133,11 @@ def main():
 
   # iterate through models and probes and compute scores
   model_count = 1
-  for model_id, model in models.iteritems():
+  for model_id, model in models.items():
     print("\rModel", model_count, "of", len(models), end='')
     sys.stdout.flush()
     model_count += 1
-    for probe_key, probe_feature in probe_features.iteritems():
+    for probe_key, probe_feature in probe_features.items():
       # compute local scores for each model gabor jet and each probe jet
       scores = numpy.ndarray((len(model), len(probe_feature)), dtype = numpy.float)
       for model_feature_index in range(len(model)):
