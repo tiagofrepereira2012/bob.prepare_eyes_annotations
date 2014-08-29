@@ -25,15 +25,15 @@ import unittest
 from nose.plugins.skip import SkipTest
 
 import bob.io.base
+import bob.io.base.test_utils
 import bob.learn.linear
 import bob.ip.gabor
 import bob.learn.misc
 
-import numpy, numpy.linalg
+import numpy
 
 import bob.db.atnt
 
-import pkg_resources
 import bob.example.faceverify
 
 
@@ -64,7 +64,7 @@ class FaceVerifyExampleTest(unittest.TestCase):
       shutil.rmtree(self.m_temp_dir)
 
   def resource(self, f):
-    return pkg_resources.resource_filename('bob.example.faceverify.tests', f)
+    return bob.io.base.test_utils.datafile(f, 'bob.example.faceverify')
 
 
   def test00_database(self):
