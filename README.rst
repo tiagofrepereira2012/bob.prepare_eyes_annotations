@@ -1,5 +1,22 @@
-Face verification using Bob
-===========================
+.. vim: set fileencoding=utf-8 :
+.. Manuel Guenther <manuel.guenther@idiap.ch>
+.. Thu Sep  4 11:35:05 CEST 2014
+
+.. image:: https://travis-ci.org/bioidiap/bob.example.faceverify.svg?branch=master
+   :target: https://travis-ci.org/bioidiap/bob.example.faceverify
+.. image:: https://coveralls.io/repos/bioidiap/bob.example.faceverify/badge.png
+   :target: https://coveralls.io/r/bioidiap/bob.example.faceverify
+.. image:: http://img.shields.io/github/tag/bioidiap/bob.example.faceverify.png
+   :target: https://github.com/bioidiap/bob.example.faceverify
+.. image:: http://img.shields.io/pypi/v/bob.example.faceverify.png
+   :target: https://pypi.python.org/pypi/bob.example.faceverify
+.. image:: http://img.shields.io/pypi/dm/bob.example.faceverify.png
+   :target: https://pypi.python.org/pypi/bob.example.faceverify
+
+
+=======================================
+ Exemplary Face Verification Using Bob
+=======================================
 
 .. note::
   If you are reading this page through our GitHub portal and not through PyPI, note the development tip of the package may not be stable or become unstable in a matter of moments.
@@ -9,7 +26,7 @@ Face verification using Bob
 Overview
 --------
 
-This example demonstrates how to use Bob to build different face verification systems.
+This example demonstrates how to use Bob to build three different face verification systems.
 It includes examples with three different complexities:
 
 * A simple eigenface based example
@@ -19,7 +36,7 @@ It includes examples with three different complexities:
 Requirements
 ------------
 
-To use this example, you will require Bob in version of at least 1.2.0. and the AT&T database.
+To use this example, you will require the AT&T database.
 
 The AT&T database
 .................
@@ -27,18 +44,6 @@ The AT&T image database is quite small, but sufficient to show how the face veri
 Still, the results may not be meaningful.
 One good thing about the AT&T database is that it is freely available.
 You can download it from http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html.
-
-Bob
-...
-If you do not have a Bob version yet, or your Bob version is too old, you can get a new one from http://www.idiap.ch/software/bob.
-
-If your Bob version is not installed globally or not in the default path, you have to edit the *buildout.cfg* file in the root directory of this package.
-In the ``[buildout]`` section, please add a line ``prefixes = <BOB_INSTALL_DIRECTORY>``, where ``<BOB_INSTALL_DIRECTORY>`` points to the root directory of your local Bob installation.
-
-.. note::
-  If you are at Idiap, Bob is installed globally, so there is no need to specify the ``prefixes``, unless you want to use another version of it.
-
-
 
 Download
 --------
