@@ -228,12 +228,12 @@ def main():
   print("Result: FAR", FAR, "and FRR", FRR, "at threshold", threshold)
 
   # plot ROC curve
-  bob.measure.plot.roc(negatives, positives)
-  pyplot.xlabel("False Rejection Rate (\%)")
-  pyplot.ylabel("False Acceptance Rate (\%)")
+  bob.measure.plot.roc(negatives, positives, CAR=True)
+  pyplot.xlabel("False Acceptance Rate (\%)")
+  pyplot.ylabel("Correct Acceptance Rate (\%)")
   pyplot.title("ROC Curve for UBM/GMM based AT\&T Verification Experiment")
   pyplot.grid()
-  pyplot.axis([0, 100, 0, 100]) #xmin, xmax, ymin, ymax
+  pyplot.axis([0.1, 100, 0, 100]) #xmin, xmax, ymin, ymax
 
   # save plot to file
   pyplot.savefig("dct_ubm.pdf")

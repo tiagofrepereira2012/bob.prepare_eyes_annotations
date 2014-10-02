@@ -161,6 +161,10 @@ The expected result is: FAR 9.15% and FRR 9% at threshold -9276.2
 
 .. note::
 
+  Here we plot the ROC curves with logarithmic FAR axis --- to highlight the interesting part of the curve, i.e., where the FAR values are small.
+
+.. note::
+
   Computing eigenfaces with such a low amount of training data is usually not an excellent idea.
   Hence, the performance in this example is relatively poor.
 
