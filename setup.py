@@ -27,10 +27,10 @@ setup(
 
     # This is the basic information about your project. Modify all this
     # information before releasing code publicly.
-    name='bob.example.faceverify',
-    version='2.0.0a0',
-    description='Example for using Bob to create face verification systems',
-    url='http://pypi.python.org/pypi/bob.example.faceverify',
+    name='bob.prepare_eyes_annotations',
+    version='0.0.0a1',
+    description='',
+    url='',
     license='GPLv3',
     author='Manuel Guenther',
     author_email='manuel.guenther@idiap.ch',
@@ -52,11 +52,8 @@ setup(
       "setuptools",
       "bob.io.image",              # image IO
       "bob.ip.base",               # tan-triggs, dct-blocks
-      "bob.ip.gabor",              # gabor graph
-      "bob.learn.linear",          # eigenfaces
-      "bob.learn.misc",            # ubm-gmm
-      "bob.measure",               # computing ROC
-      "bob.db.atnt",               # the AT&T (ORL) database of images
+      "bob.ip.flandmark",
+      "gridtk", 
     ],
 
     # This package is good examples of namespace implementations
@@ -64,7 +61,6 @@ setup(
     # https://github.com/idiap/bob/wiki/Satellite-Packages
     namespace_packages = [
       'bob',
-      'bob.example',
     ],
 
     # This entry defines which scripts you will have inside the 'bin' directory
@@ -74,15 +70,7 @@ setup(
     entry_points={
       'console_scripts':
       [
-        'eigenface.py = bob.example.faceverify.eigenface:main',
-        'gabor_graph.py = bob.example.faceverify.gabor_graph:main',
-        'dct_ubm.py = bob.example.faceverify.dct_ubm:main'
-      ],
-
-       # bob unittest declaration
-      'bob.test':
-      [
-        'faceverify = faceverify.tests:FaceVerifyExampleTest',
+        'pre_annotate_eyes.py = bob.prepare_eyes_annotations.script.pre_annotate_eyes:main',
       ],
     },
 
