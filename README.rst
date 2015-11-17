@@ -10,5 +10,5 @@ Pre annotation of the eyes region
 Overview
 --------
 
-This package generates annotations files compatible with this annotation software https://github.com/bioidiap/annotation.video and also prepare the annotations file for the facereclib.
+This package generates annotations files compatible with this annotation software https://github.com/bioidiap/annotation.video and also prepare the annotations file for the facereclib (https://github.com/idiap/facereclib).
 
